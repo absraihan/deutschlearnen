@@ -3,7 +3,7 @@ import { View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { CATEGORY_LABELS_DE, MASTERY_STREAK } from '@deutschlearnen/shared';
-import { mistakeRepository } from '@/database/repositories';
+import { exerciseRepository, mistakeRepository } from '@/database/repositories';
 import { useTheme } from '@/theme';
 import {
   Button,
@@ -33,6 +33,11 @@ export default function MistakesScreen() {
   const mistakes = useQuery({
     queryKey: ['mistakes'],
     queryFn: () => mistakeRepository.listAll(),
+  });
+
+  const todayDrills = useQuery({
+    queryKey: ['drill-stats-today'],
+    queryFn: () => exerciseRepository.statsForToday(),
   });
 
   const setMastered = useMutation({
@@ -80,6 +85,12 @@ export default function MistakesScreen() {
             style={{ marginTop: theme.spacing.lg }}
             onPress={() => router.push('/drill')}
           />
+
+          {todayDrills.data && todayDrills.data.completed > 0 ? (
+            <Text variant="caption" tone="muted" style={{ marginTop: theme.spacing.sm, textAlign: 'center' }}>
+              Heute schon geübt: {todayDrills.data.correct} von {todayDrills.data.completed} richtig
+            </Text>
+          ) : null}
 
           <SectionHeader title={`Offen (${active.length})`} />
           <View style={{ gap: theme.spacing.md }}>

@@ -126,8 +126,18 @@ simple and is the seam for a real SRS algorithm.
 
 ### `practice_exercise`
 
-Generated drills with `completed_at` and `was_correct`, so a drill session can be
-resumed and reviewed.
+| column | notes |
+|---|---|
+| `id` | `exr_...` |
+| `mistake_id` | the mistake this drill targets, so a result is attributable even after the screen is closed and reopened |
+| `type` | fill-blank / reorder / transform / speak |
+| `prompt`, `answer`, `hint`, `explanation` | |
+| `level` | |
+| `created_at`, `completed_at`, `was_correct` | |
+
+Generated drills cost an API call, so they are persisted rather than discarded
+when the screen unmounts. An interrupted drill session resumes from the
+unfinished rows at no cost, and unfinished drills older than a week are pruned.
 
 ### `daily_goal`
 
@@ -170,6 +180,7 @@ prompt and every bill.
 | `progressRepository` | recordSession, recent, summary, activeDates |
 | `dailyGoalRepository` | ensureToday, addMinutes |
 | `memoryRepository` | get, appendNote, setDifficulty |
+| `exerciseRepository` | saveMany, complete, listPending, statsForToday, pruneStale |
 
 This is the seam for cloud sync: a Postgres implementation exposing the same
 surface can replace SQLite without touching a screen.

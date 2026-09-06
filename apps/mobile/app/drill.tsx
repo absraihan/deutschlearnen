@@ -2,8 +2,12 @@ import React, { useMemo, useState } from 'react';
 import { TextInput, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useQuery } from '@tanstack/react-query';
-import { normalizeForComparison, type Exercise } from '@deutschlearnen/shared';
-import { mistakeRepository } from '@/database/repositories';
+import {
+  normalizeForComparison,
+  type Exercise,
+  type PracticeExercise,
+} from '@deutschlearnen/shared';
+import { exerciseRepository, mistakeRepository } from '@/database/repositories';
 import { api, ApiClientError } from '@/services/api';
 import { useSettingsStore } from '@/store/settings';
 import { useTheme } from '@/theme';
@@ -41,7 +45,21 @@ export default function DrillScreen() {
     queryKey: ['drills'],
     queryFn: async () => {
       const mistakes = await mistakeRepository.listActive(5);
-      if (mistakes.length === 0) return { intro: '', exercises: [] as Exercise[], mistakes };
+      if (mistakes.length === 0) {
+        return { intro: '', exercises: [] as Exercise[], saved: [] as PracticeExercise[], mistakes };
+      }
+
+      // Reuse drills that were generated but never finished: they already cost
+      // an API call, and resuming is instant and free.
+      const pending = await exerciseRepository.listPending(5);
+      if (pending.length >= 3) {
+        return {
+          intro: 'Weiter mit den Übungen von vorhin.',
+          exercises: pending.map(toExercise),
+          saved: pending,
+          mistakes,
+        };
+      }
 
       const result = await api.generateExercises({
         level: settings.currentLevel,
@@ -54,7 +72,16 @@ export default function DrillScreen() {
         })),
         includeBangla: settings.banglaExplanations,
       });
-      return { ...result, mistakes };
+
+      // Persist, pairing each drill with the mistake it targets, so a result
+      // can be attributed even if the screen is closed and reopened.
+      const saved = await exerciseRepository.saveMany(
+        result.exercises,
+        result.exercises.map((_, i) => mistakes[i % mistakes.length]?.id ?? null),
+      );
+      void exerciseRepository.pruneStale();
+
+      return { ...result, saved, mistakes };
     },
     retry: false,
   });
@@ -71,12 +98,18 @@ export default function DrillScreen() {
     setRevealed(true);
     if (isCorrect) setCorrectCount((n) => n + 1);
 
-    // Feed the result back into mistake mastery.
-    const mistake = drills.data?.mistakes[index % (drills.data?.mistakes.length || 1)];
-    if (mistake) {
+    const saved = drills.data?.saved[index];
+    if (saved) void exerciseRepository.complete(saved.id, isCorrect);
+
+    // Feed the result back into mistake mastery. The drill row records which
+    // mistake it targeted, so attribution survives a reopened screen.
+    const mistakeId =
+      saved?.mistakeId ??
+      drills.data?.mistakes[index % (drills.data?.mistakes.length || 1)]?.id;
+    if (mistakeId) {
       void (isCorrect
-        ? mistakeRepository.recordSuccess(mistake.id)
-        : mistakeRepository.recordFailure(mistake.id));
+        ? mistakeRepository.recordSuccess(mistakeId)
+        : mistakeRepository.recordFailure(mistakeId));
     }
   };
 
@@ -247,6 +280,18 @@ export default function DrillScreen() {
       <View style={{ height: theme.spacing.xl }} />
     </Screen>
   );
+}
+
+/** A stored drill rendered back into the shape the screen works with. */
+function toExercise(record: PracticeExercise): Exercise {
+  return {
+    type: record.type,
+    prompt: record.prompt,
+    answer: record.answer,
+    hint: record.hint,
+    explanation: record.explanation,
+    level: record.level,
+  };
 }
 
 function exerciseTypeLabel(type: Exercise['type']): string {
