@@ -43,7 +43,15 @@
         }
       ],
       "expo-status-bar",
-      "expo-sqlite"
+      "expo-sqlite",
+      [
+        "expo-speech-recognition",
+        {
+          "microphonePermission": "DeutschLearnen uses your microphone so you can speak German to your tutor.",
+          "speechRecognitionPermission": "DeutschLearnen turns your spoken German into text so your tutor can respond and correct you.",
+          "androidSpeechServicePackages": ["com.google.android.googlequicksearchbox"]
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": false

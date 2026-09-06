@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { DEFAULT_APP_NAME, DEFAULT_SETTINGS, type UserSettings } from '@deutschlearnen/shared';
 import { settingsRepository } from '@/database/repositories';
+import { isNativeRecognitionAvailable } from '@/services/speech/stt';
 
 /**
  * Settings store.
@@ -24,8 +25,24 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
   settings: { ...DEFAULT_SETTINGS, appName: APP_NAME },
   loaded: false,
 
+  /**
+   * On a fresh install, prefer on-device speech recognition when the native
+   * module is present. Without this the app defaults to server transcription,
+   * and a build with no server key would greet the learner with an error the
+   * first time they press the microphone - when the phone could have done the
+   * recognition itself, for free.
+   */
   async load() {
+    const hadSettings = await settingsRepository.exists();
     const stored = await settingsRepository.get();
+
+    if (!hadSettings && isNativeRecognitionAvailable()) {
+      const firstRun = { ...stored, speechEngine: 'native' as const };
+      await settingsRepository.save(firstRun);
+      set({ settings: { ...firstRun, appName: APP_NAME }, loaded: true });
+      return;
+    }
+
     set({ settings: { ...stored, appName: APP_NAME }, loaded: true });
   },
 

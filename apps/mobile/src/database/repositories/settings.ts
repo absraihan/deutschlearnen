@@ -12,12 +12,22 @@ import { nowIso } from '@/lib/util';
  */
 export interface SettingsRepository {
   get(): Promise<UserSettings>;
+  /** False on a fresh install, so first-run defaults can be chosen once. */
+  exists(): Promise<boolean>;
   save(settings: UserSettings): Promise<void>;
   patch(partial: Partial<UserSettings>): Promise<UserSettings>;
   reset(): Promise<UserSettings>;
 }
 
 export const settingsRepository: SettingsRepository = {
+  async exists() {
+    const db = await getDatabase();
+    const row = await db.getFirstAsync<{ n: number }>(
+      'SELECT COUNT(*) AS n FROM user_settings WHERE id = 1;',
+    );
+    return (row?.n ?? 0) > 0;
+  },
+
   async get() {
     const db = await getDatabase();
     const row = await db.getFirstAsync<{ data: string }>(
