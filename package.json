@@ -15,7 +15,8 @@
     "test": "npm run test -w @deutschlearnen/shared && npm run test -w @deutschlearnen/server && npm run test -w @deutschlearnen/mobile",
     "test:shared": "npm run test -w @deutschlearnen/shared",
     "test:server": "npm run test -w @deutschlearnen/server",
-    "test:mobile": "npm run test -w @deutschlearnen/mobile"
+    "test:mobile": "npm run test -w @deutschlearnen/mobile",
+    "test:conversation": "node scripts/test-conversation.mjs"
   },
   "engines": {
     "node": ">=20"

@@ -6,6 +6,9 @@ npm run test:shared      # vitest  — learning model
 npm run test:server      # vitest  — API + providers
 npm run test:mobile      # jest    — utils, API client, components
 npm run typecheck        # tsc across all three packages
+
+npm run test:conversation            # real multi-turn German conversation
+npm run test:conversation -- --level B2
 ```
 
 Current state: **158 tests, all passing**, TypeScript clean, and the Android
@@ -145,6 +148,54 @@ the root `package.json` does not fix this on npm 11; `moduleNameMapper` in
 
 **`render` is async in @testing-library/react-native v14.** Component tests must
 `await render(...)` and use the queries it resolves to, not the global `screen`.
+
+---
+
+## The conversation test (`npm run test:conversation`)
+
+Unit tests cannot tell you whether the tutor *behaves like a tutor* — that
+depends on the model. This script boots the server with whatever `AI_PROVIDER`
+is configured and holds a real multi-turn German conversation containing
+deliberate learner mistakes, then reports what came back.
+
+```
+Provider  openai · gpt-4o-mini
+Level     A2
+
+────────────────────────────────────────────────────────────────────
+Du     Gestern ich habe zum Markt gegangen.
+Tutor  Fast! Besser: Gestern bin ich zum Markt gegangen. Was hast du gekauft?
+
+  Korrektur  Gestern bin ich zum Markt gegangen.
+  Bei "gehen" benutzen wir im Perfekt "sein".
+  [auxiliary-verb · important]
+  ✓ caught "bin ich zum Markt gegangen"
+  1180 ms · 940 in / 88 out · accuracy 0.55 · level A2
+
+Corrections caught  2/2
+Tokens             3120 in / 290 out
+Cost this run      ~$0.00064
+```
+
+Each scripted turn declares what the tutor **should** catch, so the run exits
+non-zero if a known mistake slips through. Turns marked `expect: null` are
+correct German — if the tutor "corrects" one of those, it is flagged as
+`! corrected a sentence that was fine`, which is the failure mode that makes a
+tutor exhausting to use.
+
+`--level A1|A2|B1|B2` picks the script. Each level's turns target the grammar
+that level is actually working on: accusative articles at A1, `sein`/`haben` in
+the Perfekt at A2, `dass`-clause verb position at B1, and reported-speech word
+order at B2.
+
+Two implementation details worth knowing, both learned the hard way:
+
+- **It binds a random free port**, not a fixed one. A fixed port meant a stray
+  server from a previous run answered the health check and the script silently
+  tested a stale build while reporting success.
+- **It spawns `tsx` directly, not through `npx` with a shell.** On Windows a
+  shell spawn puts `cmd.exe` between the script and node, so `kill()` reaps the
+  wrapper and orphans the server.
 
 ---
 
