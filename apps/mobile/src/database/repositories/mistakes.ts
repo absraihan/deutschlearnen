@@ -4,7 +4,7 @@ import {
   type CefrLevel,
   type MistakeCategory,
   type MistakeRecord,
-} from '@deutschcoach/shared';
+} from '@deutschlearnen/shared';
 import { getDatabase } from '../index';
 import { createId, nowIso, toBool } from '@/lib/util';
 

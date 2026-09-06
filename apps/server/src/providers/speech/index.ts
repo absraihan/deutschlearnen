@@ -1,5 +1,5 @@
 import { request } from 'undici';
-import type { TranscribeResponse } from '@deutschcoach/shared';
+import type { TranscribeResponse } from '@deutschlearnen/shared';
 import type { Env } from '../../env';
 import { AIProviderError } from '../ai/types';
 

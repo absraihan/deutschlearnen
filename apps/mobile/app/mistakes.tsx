@@ -2,7 +2,7 @@ import React from 'react';
 import { View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { CATEGORY_LABELS_DE, MASTERY_STREAK } from '@deutschcoach/shared';
+import { CATEGORY_LABELS_DE, MASTERY_STREAK } from '@deutschlearnen/shared';
 import { mistakeRepository } from '@/database/repositories';
 import { useTheme } from '@/theme';
 import {

@@ -2,7 +2,7 @@ import React from 'react';
 import { View } from 'react-native';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useQuery } from '@tanstack/react-query';
-import { CATEGORY_LABELS_DE, LEVEL_PROFILES } from '@deutschcoach/shared';
+import { CATEGORY_LABELS_DE, LEVEL_PROFILES } from '@deutschlearnen/shared';
 import {
   memoryRepository,
   mistakeRepository,

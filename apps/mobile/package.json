@@ -1,5 +1,5 @@
 {
-  "name": "@deutschcoach/mobile",
+  "name": "@deutschlearnen/mobile",
   "version": "0.1.0",
   "private": true,
   "main": "expo-router/entry",
@@ -13,7 +13,7 @@
     "lint": "expo lint"
   },
   "dependencies": {
-    "@deutschcoach/shared": "*",
+    "@deutschlearnen/shared": "*",
     "@tanstack/react-query": "^5.102.8",
     "expo": "~57.0.20",
     "expo-audio": "~57.0.4",

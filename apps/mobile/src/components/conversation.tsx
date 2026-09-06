@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { Animated, Easing, Pressable, StyleSheet, View } from 'react-native';
-import { CATEGORY_LABELS_DE, type Correction } from '@deutschcoach/shared';
+import { CATEGORY_LABELS_DE, type Correction } from '@deutschlearnen/shared';
 import { useTheme } from '@/theme';
 import { Text } from './ui';
 import type { MicState } from '@/features/conversation/useConversation';

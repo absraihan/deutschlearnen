@@ -24,7 +24,7 @@ with a readable message instead of failing on the learner's first sentence.
 | `PORT` | `4000` | |
 | `HOST` | `0.0.0.0` | Must be `0.0.0.0`, not `127.0.0.1`, for the phone to reach it |
 | `LOG_LEVEL` | `info` | `fatal`…`trace` |
-| `APP_NAME` | `DeutschCoach AI` | Returned by `/health` |
+| `APP_NAME` | `DeutschLearnen` | Returned by `/health` |
 
 ### AI provider
 
@@ -89,12 +89,12 @@ bundle**. Treat every one as public.
 |---|---|---|
 | `EXPO_PUBLIC_API_URL` | `http://192.168.1.23:4000` | Your computer's LAN IP. `localhost` is the *phone's* localhost and will not work. |
 | `EXPO_PUBLIC_API_TOKEN` | `a1b2c3...` | Must equal the server's `API_TOKEN`. A shared secret for your own server, not a user credential. |
-| `EXPO_PUBLIC_APP_NAME` | `DeutschCoach AI` | Shown in the app |
+| `EXPO_PUBLIC_APP_NAME` | `DeutschLearnen` | Shown in the app |
 
 Changes require a restart with cache cleared:
 
 ```bash
-npm run start:clear -w @deutschcoach/mobile
+npm run start:clear -w @deutschlearnen/mobile
 ```
 
 For an APK, set these as EAS secrets before building — see

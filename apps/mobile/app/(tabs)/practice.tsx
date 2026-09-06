@@ -7,7 +7,7 @@ import {
   modesForLevel,
   type CefrLevel,
   type SessionDuration,
-} from '@deutschcoach/shared';
+} from '@deutschlearnen/shared';
 import { useSettingsStore } from '@/store/settings';
 import { useTheme } from '@/theme';
 import { Card, Chip, Row, Screen, SectionHeader, Text, Button } from '@/components/ui';

@@ -154,8 +154,8 @@ npx expo run:android
 for a personal sideloaded app. For a real signing key:
 
 ```bash
-keytool -genkeypair -v -keystore deutschcoach.keystore \
-  -alias deutschcoach -keyalg RSA -keysize 2048 -validity 10000
+keytool -genkeypair -v -keystore deutschlearnen.keystore \
+  -alias deutschlearnen -keyalg RSA -keysize 2048 -validity 10000
 ```
 
 Reference it from `android/gradle.properties`. **Never commit the keystore.**

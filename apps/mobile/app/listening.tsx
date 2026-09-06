@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useQuery } from '@tanstack/react-query';
-import { PLAYBACK_SPEEDS, isValidLevel, type CefrLevel } from '@deutschcoach/shared';
+import { PLAYBACK_SPEEDS, isValidLevel, type CefrLevel } from '@deutschlearnen/shared';
 import { api, ApiClientError } from '@/services/api';
 import { useSettingsStore } from '@/store/settings';
 import { useTheme } from '@/theme';

@@ -25,8 +25,8 @@ node -v && npm -v && git --version
 ## 2. Install
 
 ```bash
-git clone <your-repo> deutschcoach-ai
-cd deutschcoach-ai
+git clone <your-repo> deutschlearnen
+cd deutschlearnen
 npm install
 npm run build:shared
 ```
@@ -36,7 +36,7 @@ the app import the compiled output, so run this after every change to
 `packages/shared`.** During active work on it, use:
 
 ```bash
-npm run build:watch -w @deutschcoach/shared
+npm run build:watch -w @deutschlearnen/shared
 ```
 
 ---
@@ -102,7 +102,7 @@ If it does not:
 - Windows Firewall will likely prompt on first run — allow Node on **private**
   networks. To add the rule manually:
   ```powershell
-  New-NetFirewallRule -DisplayName "DeutschCoach dev server" -Direction Inbound -LocalPort 4000 -Protocol TCP -Action Allow -Profile Private
+  New-NetFirewallRule -DisplayName "DeutschLearnen dev server" -Direction Inbound -LocalPort 4000 -Protocol TCP -Action Allow -Profile Private
   ```
 
 ---
@@ -117,7 +117,7 @@ cp .env.example .env
 ```dotenv
 EXPO_PUBLIC_API_URL=http://192.168.1.23:4000
 EXPO_PUBLIC_API_TOKEN=
-EXPO_PUBLIC_APP_NAME=DeutschCoach AI
+EXPO_PUBLIC_APP_NAME=DeutschLearnen
 ```
 
 Use the IP the server printed. `localhost` will **not** work from a phone — that
@@ -134,7 +134,7 @@ npm run dev:mobile
 ```
 
 Scan the QR code with **Expo Go**. Changing `.env` requires a restart with
-`npm run start:clear -w @deutschcoach/mobile` — Expo inlines these at build time.
+`npm run start:clear -w @deutschlearnen/mobile` — Expo inlines these at build time.
 
 ---
 
@@ -236,8 +236,8 @@ Try `Gestern ich habe zum Markt gegangen.` — you should get back
 | Mic does nothing | permission denied | Android Settings → Apps → Expo Go → Permissions → Microphone |
 | "Die Spracherkennung auf dem Server ist nicht aktiv" | `STT_PROVIDER=none` | set `STT_PROVIDER=openai-whisper`, or use Text-Chat |
 | Tutor is silent | no German TTS voice | install German voice data (see above) |
-| `Cannot find module '@deutschcoach/shared'` | shared not built | `npm run build:shared` |
-| Changes to `.env` ignored | Expo inlines env at build | `npm run start:clear -w @deutschcoach/mobile` |
+| `Cannot find module '@deutschlearnen/shared'` | shared not built | `npm run build:shared` |
+| Changes to `.env` ignored | Expo inlines env at build | `npm run start:clear -w @deutschlearnen/mobile` |
 | Metro cannot resolve a workspace package | stale cache | `npx expo start --clear` |
 
 ---

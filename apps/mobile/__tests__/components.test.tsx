@@ -1,6 +1,6 @@
 import React from 'react';
 import { render } from '@testing-library/react-native';
-import type { Correction } from '@deutschcoach/shared';
+import type { Correction } from '@deutschlearnen/shared';
 import { CorrectionCard, MicButton, MessageBubble } from '@/components/conversation';
 import { ThemeProvider } from '@/theme';
 

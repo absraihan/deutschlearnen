@@ -1,5 +1,5 @@
 /**
- * Core domain types for DeutschCoach AI.
+ * Core domain types for DeutschLearnen.
  * These are shared by the mobile app, the server and the AI layer, so that a
  * change to the learning model is a change in exactly one place.
  */

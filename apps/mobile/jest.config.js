@@ -1,14 +1,14 @@
 /**
  * jest-expo provides the React Native + Expo module mocks. `transformIgnorePatterns`
  * has to allow the RN/Expo packages through babel, and the workspace `packages/`
- * folder too, since @deutschcoach/shared is resolved from the repo root.
+ * folder too, since @deutschlearnen/shared is resolved from the repo root.
  */
 module.exports = {
   preset: 'jest-expo',
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   testMatch: ['<rootDir>/__tests__/**/*.test.ts', '<rootDir>/__tests__/**/*.test.tsx'],
   transformIgnorePatterns: [
-    'node_modules/(?!((jest-)?react-native|@react-native(-community)?)|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|react-native-svg|@deutschcoach/.*)',
+    'node_modules/(?!((jest-)?react-native|@react-native(-community)?)|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|react-native-svg|@deutschlearnen/.*)',
   ],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',

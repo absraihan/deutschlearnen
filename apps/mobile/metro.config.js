@@ -1,6 +1,6 @@
 // Metro configuration for a workspace monorepo.
 // Without watchFolders and nodeModulesPaths, Metro cannot resolve
-// @deutschcoach/shared from the workspace root.
+// @deutschlearnen/shared from the workspace root.
 const { getDefaultConfig } = require('expo/metro-config');
 const path = require('node:path');
 

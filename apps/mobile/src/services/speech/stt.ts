@@ -3,7 +3,7 @@ import {
   MIN_UTTERANCE_CHARS,
   MIN_UTTERANCE_MS,
   SPEECH_LOCALE,
-} from '@deutschcoach/shared';
+} from '@deutschlearnen/shared';
 import { api, ApiClientError } from '../api';
 
 /**

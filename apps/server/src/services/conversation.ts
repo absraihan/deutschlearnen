@@ -5,7 +5,7 @@ import {
   trimConversation,
   type RespondRequest,
   type RespondResponse,
-} from '@deutschcoach/shared';
+} from '@deutschlearnen/shared';
 import type { AIProvider } from '../providers/ai/types';
 import { AIProviderError } from '../providers/ai/types';
 

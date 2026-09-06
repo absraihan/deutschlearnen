@@ -16,7 +16,7 @@ import type {
   ShadowingSet,
   TutorTurn,
   VocabularySuggestion,
-} from '@deutschcoach/shared';
+} from '@deutschlearnen/shared';
 
 /**
  * The AI abstraction.
@@ -24,7 +24,7 @@ import type {
  * Everything the app asks a model to do goes through this interface. Swapping
  * provider means writing one new class and changing AI_PROVIDER in .env - no
  * route, service or screen changes. Providers own their prompt-to-JSON plumbing
- * but share the prompts from @deutschcoach/shared, so tutor behaviour stays
+ * but share the prompts from @deutschlearnen/shared, so tutor behaviour stays
  * identical across providers.
  */
 export interface AIProvider {

@@ -6,9 +6,9 @@ import type { CefrLevel, UserSettings } from './types';
  * The product name lives here (and is overridable by env on both sides), so
  * renaming the app is a one-line change plus an app.json tweak.
  */
-export const DEFAULT_APP_NAME = 'DeutschCoach AI';
+export const DEFAULT_APP_NAME = 'DeutschLearnen';
 export const DEFAULT_APP_TAGLINE = 'Dein persönlicher Sprachcoach';
-export const APP_SLUG = 'deutschcoach-ai';
+export const APP_SLUG = 'deutschlearnen';
 
 /** German locale used everywhere in the speech pipeline. */
 export const SPEECH_LOCALE = 'de-DE';

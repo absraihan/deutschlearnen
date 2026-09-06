@@ -7,7 +7,7 @@ export const testEnv: Env = {
   NODE_ENV: 'test',
   PORT: 0,
   HOST: '127.0.0.1',
-  APP_NAME: 'DeutschCoach AI',
+  APP_NAME: 'DeutschLearnen',
   AI_PROVIDER: 'mock',
   OPENAI_MODEL: 'gpt-4o-mini',
   ANTHROPIC_MODEL: 'claude-sonnet-5',

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Pressable, TextInput, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import type { VocabularyStatus } from '@deutschcoach/shared';
+import type { VocabularyStatus } from '@deutschlearnen/shared';
 import { vocabularyRepository } from '@/database/repositories';
 import { api, ApiClientError } from '@/services/api';
 import { useSettingsStore } from '@/store/settings';

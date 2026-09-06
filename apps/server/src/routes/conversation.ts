@@ -2,7 +2,7 @@ import {
   AnalyzeRequestSchema,
   RespondRequestSchema,
   type CefrLevel,
-} from '@deutschcoach/shared';
+} from '@deutschlearnen/shared';
 import type { FastifyInstance } from 'fastify';
 import type { AppContext } from '../context';
 
@@ -46,7 +46,7 @@ export async function conversationRoutes(
    */
   app.get('/api/conversation/opening', async (request, reply) => {
     const query = request.query as { modeId?: string; level?: string; roleplayId?: string };
-    const { getMode, getRoleplay, CEFR_LEVELS } = await import('@deutschcoach/shared');
+    const { getMode, getRoleplay, CEFR_LEVELS } = await import('@deutschlearnen/shared');
 
     const level = (CEFR_LEVELS as readonly string[]).includes(query.level ?? '')
       ? (query.level as CefrLevel)

@@ -11,7 +11,7 @@
         "buildType": "apk"
       },
       "env": {
-        "EXPO_PUBLIC_APP_NAME": "DeutschCoach AI"
+        "EXPO_PUBLIC_APP_NAME": "DeutschLearnen"
       }
     },
     "preview": {
@@ -20,7 +20,7 @@
         "buildType": "apk"
       },
       "env": {
-        "EXPO_PUBLIC_APP_NAME": "DeutschCoach AI"
+        "EXPO_PUBLIC_APP_NAME": "DeutschLearnen"
       }
     },
     "production": {
@@ -29,7 +29,7 @@
         "buildType": "app-bundle"
       },
       "env": {
-        "EXPO_PUBLIC_APP_NAME": "DeutschCoach AI"
+        "EXPO_PUBLIC_APP_NAME": "DeutschLearnen"
       }
     }
   },

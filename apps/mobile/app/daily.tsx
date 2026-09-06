@@ -9,7 +9,7 @@ import {
   dayNumberSince,
   lessonForDay,
   type SessionDuration,
-} from '@deutschcoach/shared';
+} from '@deutschlearnen/shared';
 import { dailyGoalRepository, memoryRepository } from '@/database/repositories';
 import { useSettingsStore } from '@/store/settings';
 import { useTheme } from '@/theme';

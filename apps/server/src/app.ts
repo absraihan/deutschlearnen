@@ -2,7 +2,7 @@ import cors from '@fastify/cors';
 import multipart from '@fastify/multipart';
 import rateLimit from '@fastify/rate-limit';
 import Fastify, { type FastifyInstance } from 'fastify';
-import { DEFAULT_APP_NAME } from '@deutschcoach/shared';
+import { DEFAULT_APP_NAME } from '@deutschlearnen/shared';
 import { createContext, type AppContext } from './context';
 import type { Env } from './env';
 import { registerAuth } from './middleware/auth';

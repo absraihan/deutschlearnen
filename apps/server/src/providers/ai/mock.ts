@@ -20,7 +20,7 @@ import {
   type ShadowingSet,
   type TutorTurn,
   type VocabularySuggestion,
-} from '@deutschcoach/shared';
+} from '@deutschlearnen/shared';
 import { checkGerman } from './rules';
 import { EMPTY_USAGE, type AIProvider, type AIResult } from './types';
 

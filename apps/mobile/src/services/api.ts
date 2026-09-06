@@ -10,7 +10,7 @@ import type {
   ShadowingSet,
   TranscribeResponse,
   VocabularySuggestion,
-} from '@deutschcoach/shared';
+} from '@deutschlearnen/shared';
 
 /**
  * The only way the app talks to the outside world.

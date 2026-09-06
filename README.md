@@ -1,4 +1,4 @@
-# DeutschCoach AI
+# DeutschLearnen
 
 A personal German speaking coach for Android. Open the app, press the microphone,
 speak German, and have a real conversation with an AI tutor that corrects what
@@ -32,7 +32,7 @@ server is a stateless gateway that holds the API keys and nothing else.
 ## Repository layout
 
 ```
-deutschcoach-ai/
+deutschlearnen/
 ├── packages/shared/     CEFR engine, 20 modes, roleplays, prompts, Zod schemas,
 │                        scoring, session plans, context trimming
 ├── apps/server/         Fastify + TypeScript. Holds every API key.

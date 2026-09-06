@@ -5,7 +5,7 @@ import {
   setAudioModeAsync,
   useAudioRecorder,
 } from 'expo-audio';
-import { MAX_UTTERANCE_MS } from '@deutschcoach/shared';
+import { MAX_UTTERANCE_MS } from '@deutschlearnen/shared';
 import { SpeechError } from '@/services/speech/stt';
 
 /**

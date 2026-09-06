@@ -1,4 +1,4 @@
-import { DEFAULT_SETTINGS, type UserSettings } from '@deutschcoach/shared';
+import { DEFAULT_SETTINGS, type UserSettings } from '@deutschlearnen/shared';
 import { getDatabase } from '../index';
 import { nowIso } from '@/lib/util';
 

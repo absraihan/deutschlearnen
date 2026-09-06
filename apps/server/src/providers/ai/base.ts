@@ -38,7 +38,7 @@ import {
   type ShadowingSet,
   type TutorTurn,
   type VocabularySuggestion,
-} from '@deutschcoach/shared';
+} from '@deutschlearnen/shared';
 import { z } from 'zod';
 import {
   AIProviderError,

@@ -100,7 +100,7 @@ describe('ApiClientError mapping', () => {
     mockFetch(async () =>
       jsonResponse(200, {
         status: 'ok',
-        appName: 'DeutschCoach AI',
+        appName: 'DeutschLearnen',
         ai: { provider: 'mock', model: 'rule-based-offline' },
         stt: { provider: 'none' },
         tts: { provider: 'none' },

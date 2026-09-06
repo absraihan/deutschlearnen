@@ -6,7 +6,7 @@ import {
   examTasksForLevel,
   isValidLevel,
   type CefrLevel,
-} from '@deutschcoach/shared';
+} from '@deutschlearnen/shared';
 import { useSettingsStore } from '@/store/settings';
 import { useTheme } from '@/theme';
 import { Button, Card, Chip, Row, Screen, SectionHeader, Text } from '@/components/ui';

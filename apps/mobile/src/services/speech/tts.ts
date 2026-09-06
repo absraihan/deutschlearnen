@@ -1,7 +1,7 @@
 import * as Speech from 'expo-speech';
 import { cacheDirectory, deleteAsync, writeAsStringAsync } from 'expo-file-system/legacy';
 import { createAudioPlayer, type AudioPlayer } from 'expo-audio';
-import { SPEECH_LOCALE, baseSpeechRate, type CefrLevel } from '@deutschcoach/shared';
+import { SPEECH_LOCALE, baseSpeechRate, type CefrLevel } from '@deutschlearnen/shared';
 import { api } from '../api';
 import { clamp } from '@/lib/util';
 

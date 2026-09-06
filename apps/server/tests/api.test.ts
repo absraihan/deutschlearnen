@@ -1,6 +1,6 @@
 import type { FastifyInstance } from 'fastify';
 import { afterEach, describe, expect, it } from 'vitest';
-import { TutorTurnSchema } from '@deutschcoach/shared';
+import { TutorTurnSchema } from '@deutschlearnen/shared';
 import { makeApp, respondBody, learnerA1 } from './helpers';
 
 let app: FastifyInstance | null = null;

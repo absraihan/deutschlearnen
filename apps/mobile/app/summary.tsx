@@ -2,7 +2,7 @@ import React from 'react';
 import { View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useQuery } from '@tanstack/react-query';
-import { CATEGORY_LABELS_DE } from '@deutschcoach/shared';
+import { CATEGORY_LABELS_DE } from '@deutschlearnen/shared';
 import { sessionRepository } from '@/database/repositories';
 import { useTheme } from '@/theme';
 import {

@@ -7,7 +7,7 @@ import {
   SESSION_DURATIONS,
   type CefrLevel,
   type CorrectionMode,
-} from '@deutschcoach/shared';
+} from '@deutschlearnen/shared';
 import {
   deleteAllData,
   deleteConversationHistory,

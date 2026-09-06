@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { TextInput, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useQuery } from '@tanstack/react-query';
-import { normalizeForComparison, type Exercise } from '@deutschcoach/shared';
+import { normalizeForComparison, type Exercise } from '@deutschlearnen/shared';
 import { mistakeRepository } from '@/database/repositories';
 import { api, ApiClientError } from '@/services/api';
 import { useSettingsStore } from '@/store/settings';

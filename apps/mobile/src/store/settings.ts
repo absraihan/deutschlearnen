@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { DEFAULT_APP_NAME, DEFAULT_SETTINGS, type UserSettings } from '@deutschcoach/shared';
+import { DEFAULT_APP_NAME, DEFAULT_SETTINGS, type UserSettings } from '@deutschlearnen/shared';
 import { settingsRepository } from '@/database/repositories';
 
 /**

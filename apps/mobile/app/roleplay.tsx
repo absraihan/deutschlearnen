@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { CEFR_LEVELS, isValidLevel, roleplaysForLevel, type CefrLevel } from '@deutschcoach/shared';
+import { CEFR_LEVELS, isValidLevel, roleplaysForLevel, type CefrLevel } from '@deutschlearnen/shared';
 import { useSettingsStore } from '@/store/settings';
 import { useTheme } from '@/theme';
 import { Button, Card, Chip, EmptyState, Row, Screen, SectionHeader, Text } from '@/components/ui';

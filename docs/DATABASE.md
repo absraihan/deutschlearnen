@@ -1,6 +1,6 @@
 # Database
 
-SQLite via `expo-sqlite`, on the phone. File: `deutschcoach.db`.
+SQLite via `expo-sqlite`, on the phone. File: `deutschlearnen.db`.
 `PRAGMA journal_mode = WAL` (reads stay fast while a session writes every few
 seconds) and `PRAGMA foreign_keys = ON`.
 
@@ -193,8 +193,8 @@ are wired to Settings → Datenschutz behind a confirmation dialog.
 ## Inspecting the database
 
 ```bash
-adb exec-out run-as com.deutschcoach.ai \
-  cat databases/deutschcoach.db > local.db
+adb exec-out run-as com.deutschlearnen.app \
+  cat databases/deutschlearnen.db > local.db
 sqlite3 local.db "SELECT category, wrong_text, correct_text, count
                   FROM mistake WHERE mastered = 0 ORDER BY count DESC;"
 ```

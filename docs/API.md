@@ -48,7 +48,7 @@ token.
 ```json
 {
   "status": "ok",
-  "appName": "DeutschCoach AI",
+  "appName": "DeutschLearnen",
   "ai":  { "provider": "openai", "model": "gpt-4o-mini" },
   "stt": { "provider": "openai-whisper" },
   "tts": { "provider": "none" },

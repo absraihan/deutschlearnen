@@ -17,7 +17,7 @@ import {
   type SessionKind,
   type TurnMessage,
   type TurnStat,
-} from '@deutschcoach/shared';
+} from '@deutschlearnen/shared';
 import {
   dailyGoalRepository,
   memoryRepository,

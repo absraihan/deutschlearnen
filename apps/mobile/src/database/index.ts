@@ -9,7 +9,7 @@ import { ALL_TABLES, LATEST_VERSION, MIGRATIONS } from './schema';
  * honest promise rather than a partial one.
  */
 
-const DATABASE_NAME = 'deutschcoach.db';
+const DATABASE_NAME = 'deutschlearnen.db';
 
 let dbPromise: Promise<SQLite.SQLiteDatabase> | null = null;
 

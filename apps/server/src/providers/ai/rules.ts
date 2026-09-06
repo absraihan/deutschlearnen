@@ -1,4 +1,4 @@
-import type { MistakeCategory } from '@deutschcoach/shared';
+import type { MistakeCategory } from '@deutschlearnen/shared';
 
 /**
  * A small rule-based German checker.

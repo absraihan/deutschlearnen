@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "DeutschCoach AI",
-    "slug": "deutschcoach-ai",
+    "name": "DeutschLearnen",
+    "slug": "deutschlearnen",
     "version": "0.1.0",
     "orientation": "portrait",
-    "scheme": "deutschcoach",
+    "scheme": "deutschlearnen",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "splash": {
@@ -15,7 +15,7 @@
       "**/*"
     ],
     "android": {
-      "package": "com.deutschcoach.ai",
+      "package": "com.deutschlearnen.app",
       "versionCode": 1,
       "adaptiveIcon": {
         "backgroundColor": "#0B1220"
@@ -28,9 +28,9 @@
     },
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.deutschcoach.ai",
+      "bundleIdentifier": "com.deutschlearnen.app",
       "infoPlist": {
-        "NSMicrophoneUsageDescription": "DeutschCoach AI uses your microphone so you can speak German and get spoken feedback from your tutor.",
+        "NSMicrophoneUsageDescription": "DeutschLearnen uses your microphone so you can speak German and get spoken feedback from your tutor.",
         "NSSpeechRecognitionUsageDescription": "Speech recognition turns your spoken German into text so your tutor can respond and correct you."
       }
     },
@@ -39,7 +39,7 @@
       [
         "expo-audio",
         {
-          "microphonePermission": "DeutschCoach AI uses your microphone so you can speak German and get spoken feedback from your tutor."
+          "microphonePermission": "DeutschLearnen uses your microphone so you can speak German and get spoken feedback from your tutor."
         }
       ],
       "expo-status-bar",

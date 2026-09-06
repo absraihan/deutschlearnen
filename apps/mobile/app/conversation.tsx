@@ -16,7 +16,7 @@ import {
   type CefrLevel,
   type SessionDuration,
   type SessionKind,
-} from '@deutschcoach/shared';
+} from '@deutschlearnen/shared';
 import { useConversation } from '@/features/conversation/useConversation';
 import { useSettingsStore } from '@/store/settings';
 import { useTheme } from '@/theme';

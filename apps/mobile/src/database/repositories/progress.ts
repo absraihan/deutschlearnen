@@ -5,7 +5,7 @@ import {
   type DailyGoalRecord,
   type ProgressRecord,
   type ProgressSummary,
-} from '@deutschcoach/shared';
+} from '@deutschlearnen/shared';
 import { getDatabase } from '../index';
 import { toBool, todayKey } from '@/lib/util';
 

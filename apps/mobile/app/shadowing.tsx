@@ -7,7 +7,7 @@ import {
   normalizeForComparison,
   type CefrLevel,
   type PronunciationAnalysis,
-} from '@deutschcoach/shared';
+} from '@deutschlearnen/shared';
 import { api, ApiClientError } from '@/services/api';
 import { useSettingsStore } from '@/store/settings';
 import { useTheme } from '@/theme';

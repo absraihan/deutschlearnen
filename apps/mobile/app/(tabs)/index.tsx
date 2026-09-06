@@ -7,7 +7,7 @@ import {
   dayNumberSince,
   lessonForDay,
   type ProgressSummary,
-} from '@deutschcoach/shared';
+} from '@deutschlearnen/shared';
 import {
   memoryRepository,
   mistakeRepository,

@@ -3,7 +3,7 @@ import {
   SessionSummaryRequestSchema,
   SpeakRequestSchema,
   MAX_UTTERANCE_MS,
-} from '@deutschcoach/shared';
+} from '@deutschlearnen/shared';
 import type { FastifyInstance } from 'fastify';
 import type { AppContext } from '../context';
 import { AIProviderError } from '../providers/ai/types';

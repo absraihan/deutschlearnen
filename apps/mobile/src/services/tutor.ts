@@ -9,7 +9,7 @@ import {
   type TurnMessage,
   type TutorTurn,
   type UserSettings,
-} from '@deutschcoach/shared';
+} from '@deutschlearnen/shared';
 import {
   memoryRepository,
   mistakeRepository,
@@ -197,7 +197,7 @@ export async function fetchOpening(input: {
   level: CefrLevel;
   roleplayId?: string | null;
 }): Promise<string> {
-  const { getMode, getRoleplay } = await import('@deutschcoach/shared');
+  const { getMode, getRoleplay } = await import('@deutschlearnen/shared');
 
   if (input.roleplayId) {
     const scenario = getRoleplay(input.roleplayId);

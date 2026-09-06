@@ -5,7 +5,7 @@ import { AIProviderError } from '../providers/ai/types';
 /**
  * Error identification is by shape, not `instanceof`.
  *
- * @deutschcoach/shared is consumed as a CommonJS build while the server source
+ * @deutschlearnen/shared is consumed as a CommonJS build while the server source
  * is ESM under the bundler, so a ZodError thrown by a shared schema is a
  * *different class object* from the one `import { ZodError } from 'zod'` gives
  * us here. `instanceof` silently returns false and every validation failure

@@ -1,4 +1,4 @@
-import type { CefrLevel, VocabularyItem, VocabularyStatus } from '@deutschcoach/shared';
+import type { CefrLevel, VocabularyItem, VocabularyStatus } from '@deutschlearnen/shared';
 import { getDatabase } from '../index';
 import { createId, nowIso, toBool, todayKey } from '@/lib/util';
 

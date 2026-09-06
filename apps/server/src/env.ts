@@ -12,7 +12,7 @@ const EnvSchema = z.object({
   PORT: z.coerce.number().int().positive().default(4000),
   HOST: z.string().default('0.0.0.0'),
 
-  APP_NAME: z.string().default('DeutschCoach AI'),
+  APP_NAME: z.string().default('DeutschLearnen'),
 
   /** Which AIProvider implementation to construct. */
   AI_PROVIDER: z.enum(['openai', 'anthropic', 'mock']).default('mock'),

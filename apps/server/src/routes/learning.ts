@@ -12,7 +12,7 @@ import {
   normalizeForComparison,
   MistakeCategorySchema,
   CefrLevelSchema,
-} from '@deutschcoach/shared';
+} from '@deutschlearnen/shared';
 import type { FastifyInstance } from 'fastify';
 import { z } from 'zod';
 import type { AppContext } from '../context';
