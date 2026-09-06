@@ -1,0 +1,30 @@
+{
+  "name": "deutschcoach-ai",
+  "version": "0.1.0",
+  "private": true,
+  "description": "DeutschCoach AI - personal German speaking practice coach (A1-B2)",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "build:shared": "npm run build -w @deutschcoach/shared",
+    "dev:server": "npm run dev -w @deutschcoach/server",
+    "dev:mobile": "npm run start -w @deutschcoach/mobile",
+    "typecheck": "npm run typecheck -w @deutschcoach/shared && npm run typecheck -w @deutschcoach/server && npm run typecheck -w @deutschcoach/mobile",
+    "test": "npm run test -w @deutschcoach/shared && npm run test -w @deutschcoach/server && npm run test -w @deutschcoach/mobile",
+    "test:shared": "npm run test -w @deutschcoach/shared",
+    "test:server": "npm run test -w @deutschcoach/server",
+    "test:mobile": "npm run test -w @deutschcoach/mobile"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3"
+  },
+  "allowScripts": {
+    "esbuild@0.21.5": true,
+    "esbuild@0.28.2": true
+  }
+}

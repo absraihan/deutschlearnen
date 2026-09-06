@@ -1,0 +1,57 @@
+{
+  "expo": {
+    "name": "DeutschCoach AI",
+    "slug": "deutschcoach-ai",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "scheme": "deutschcoach",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "splash": {
+      "backgroundColor": "#0B1220",
+      "resizeMode": "contain"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "android": {
+      "package": "com.deutschcoach.ai",
+      "versionCode": 1,
+      "adaptiveIcon": {
+        "backgroundColor": "#0B1220"
+      },
+      "permissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.INTERNET"
+      ],
+      "edgeToEdgeEnabled": true
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.deutschcoach.ai",
+      "infoPlist": {
+        "NSMicrophoneUsageDescription": "DeutschCoach AI uses your microphone so you can speak German and get spoken feedback from your tutor.",
+        "NSSpeechRecognitionUsageDescription": "Speech recognition turns your spoken German into text so your tutor can respond and correct you."
+      }
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-audio",
+        {
+          "microphonePermission": "DeutschCoach AI uses your microphone so you can speak German and get spoken feedback from your tutor."
+        }
+      ],
+      "expo-status-bar",
+      "expo-sqlite"
+    ],
+    "experiments": {
+      "typedRoutes": false
+    },
+    "extra": {
+      "eas": {
+        "projectId": ""
+      }
+    }
+  }
+}
