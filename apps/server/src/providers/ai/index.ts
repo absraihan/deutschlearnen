@@ -1,5 +1,6 @@
 import type { Env } from '../../env';
 import { AnthropicProvider } from './anthropic';
+import { GeminiProvider } from './gemini';
 import { MockProvider } from './mock';
 import { OpenAIProvider } from './openai';
 import type { AIProvider } from './types';
@@ -8,6 +9,7 @@ export * from './types';
 export { ChatBasedProvider } from './base';
 export { OpenAIProvider } from './openai';
 export { AnthropicProvider } from './anthropic';
+export { GeminiProvider } from './gemini';
 export { MockProvider } from './mock';
 export { checkGerman } from './rules';
 
@@ -29,6 +31,13 @@ export function createAIProvider(env: Env): AIProvider {
         apiKey: env.ANTHROPIC_API_KEY ?? '',
         model: env.ANTHROPIC_MODEL,
         baseUrl: env.ANTHROPIC_BASE_URL,
+        timeoutMs: env.REQUEST_TIMEOUT_MS,
+      });
+    case 'gemini':
+      return new GeminiProvider({
+        apiKey: env.GEMINI_API_KEY ?? '',
+        model: env.GEMINI_MODEL,
+        baseUrl: env.GEMINI_BASE_URL,
         timeoutMs: env.REQUEST_TIMEOUT_MS,
       });
     case 'mock':

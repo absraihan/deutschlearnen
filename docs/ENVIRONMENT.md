@@ -30,7 +30,10 @@ with a readable message instead of failing on the learner's first sentence.
 
 | Variable | Default | Notes |
 |---|---|---|
-| `AI_PROVIDER` | `mock` | `openai` \| `anthropic` \| `mock` |
+| `AI_PROVIDER` | `mock` | `openai` \| `anthropic` \| `gemini` \| `mock` |
+| `GEMINI_API_KEY` | — | Required if `AI_PROVIDER=gemini`. **Free, no credit card:** https://aistudio.google.com/apikey |
+| `GEMINI_MODEL` | `gemini-2.0-flash` | On the free tier. `gemini-2.5-flash` is stronger where the key has access |
+| `GEMINI_BASE_URL` | — | For a proxy or a pinned API version |
 | `OPENAI_API_KEY` | — | **required** if `AI_PROVIDER=openai`, `STT_PROVIDER=openai-whisper`, or `TTS_PROVIDER=openai` |
 | `OPENAI_MODEL` | `gpt-4o-mini` | `gpt-4o` for stronger B2 argumentation |
 | `OPENAI_BASE_URL` | — | For a compatible gateway |
@@ -104,7 +107,22 @@ For an APK, set these as EAS secrets before building — see
 
 ## Two working configurations
 
-**Free and offline** — verify the whole app without spending anything:
+**Free, with a real tutor** — Gemini's free tier, no card required:
+
+```dotenv
+AI_PROVIDER=gemini
+GEMINI_API_KEY=...            # https://aistudio.google.com/apikey
+GEMINI_MODEL=gemini-2.0-flash
+STT_PROVIDER=none             # the phone does recognition on-device
+TTS_PROVIDER=none             # the phone speaks, also free
+```
+
+This is the recommended starting point: real conversation, real corrections,
+no bill. The free tier has per-minute and per-day request caps; hitting one
+returns a German "wait a moment" message rather than an error screen.
+
+**Free and offline** — verify the whole app without spending anything and
+without any key at all:
 
 ```dotenv
 AI_PROVIDER=mock

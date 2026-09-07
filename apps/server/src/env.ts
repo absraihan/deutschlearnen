@@ -15,7 +15,7 @@ const EnvSchema = z.object({
   APP_NAME: z.string().default('DeutschLearnen'),
 
   /** Which AIProvider implementation to construct. */
-  AI_PROVIDER: z.enum(['openai', 'anthropic', 'mock']).default('mock'),
+  AI_PROVIDER: z.enum(['openai', 'anthropic', 'gemini', 'mock']).default('mock'),
 
   OPENAI_API_KEY: z.string().optional(),
   OPENAI_MODEL: z.string().default('gpt-4o-mini'),
@@ -24,6 +24,11 @@ const EnvSchema = z.object({
   ANTHROPIC_API_KEY: z.string().optional(),
   ANTHROPIC_MODEL: z.string().default('claude-sonnet-5'),
   ANTHROPIC_BASE_URL: z.string().optional(),
+
+  /** Google Gemini: the only major provider with a free tier. */
+  GEMINI_API_KEY: z.string().optional(),
+  GEMINI_MODEL: z.string().default('gemini-2.0-flash'),
+  GEMINI_BASE_URL: z.string().optional(),
 
   /** Speech-to-text: 'openai-whisper' or 'none' (device recognition only). */
   STT_PROVIDER: z.enum(['openai-whisper', 'none']).default('none'),
@@ -73,6 +78,9 @@ function parseEnv(): Env {
   }
   if (env.AI_PROVIDER === 'anthropic' && !env.ANTHROPIC_API_KEY) {
     throw new Error('AI_PROVIDER=anthropic requires ANTHROPIC_API_KEY. See .env.example.');
+  }
+  if (env.AI_PROVIDER === 'gemini' && !env.GEMINI_API_KEY) {
+    throw new Error('AI_PROVIDER=gemini requires GEMINI_API_KEY. Get a free key at https://aistudio.google.com/apikey');
   }
   if (env.STT_PROVIDER === 'openai-whisper' && !env.OPENAI_API_KEY) {
     throw new Error('STT_PROVIDER=openai-whisper requires OPENAI_API_KEY. See .env.example.');
