@@ -134,7 +134,19 @@ voice conversation with German STT/TTS, corrections, session scores, mistake
 tracking and drills, vocabulary with flashcards, progress over time, daily
 practice, roleplay, listening, shadowing, exam-style practice, text mode.
 
+Running as a real app: the server is deployed and reachable over HTTPS, so the
+phone works on mobile data with no laptop involved. Speech recognition runs
+on-device, so voice costs nothing. A learner can supply their own AI key in
+Settings — with `ALLOW_SERVER_KEY_FALLBACK=false` the server answers only
+requests that bring one, which is what makes the APK shareable without sharing
+the owner's quota. The Android build is arm64-only, about 45 MB.
+
 Deliberately left as extension points (not built): cloud sync, user accounts,
 iOS release, verified pronunciation scoring, image-based practice, PDF import,
 a full SRS algorithm, teacher dashboard. See
 [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md#extension-points).
+
+Known trade-off: the free Render tier sleeps after 15 minutes idle. The app
+pings the server when it opens so the wake-up overlaps with reading the
+greeting, but a first sentence after a long gap can still be slow. Fly.io or
+Cloud Run would remove it using the same Dockerfile.

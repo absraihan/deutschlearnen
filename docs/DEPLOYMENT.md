@@ -101,7 +101,7 @@ You have to pick one before publishing:
 
 | Approach | What it means |
 |---|---|
-| **Users bring their own key** | Add a Settings field for a Gemini key, store it on the device, send it per request. Free for you, but a bad first-run experience. |
+| **Users bring their own key** ✅ **built** | Settings has a key field and a guided help screen. The key stays on the device and is sent per request. Turn it on with `ALLOW_SERVER_KEY_FALLBACK=false`. Free for you; costs the learner one visit to Google AI Studio. |
 | **You pay, with accounts and limits** | Add sign-in and per-user rate limits. Real work: auth, a user store, quota tracking, and a bill that grows with installs. |
 | **Paid app or subscription** | Covers the cost, but adds billing, refunds and store review scrutiny. |
 | **Keep it private** | Do not publish. Install by APK on your own devices. Zero cost, zero obligations. |
