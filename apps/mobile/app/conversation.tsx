@@ -230,6 +230,14 @@ export default function ConversationScreen() {
                 conversation.error.retryable ? () => void conversation.retryLast() : undefined
               }
               onDismiss={conversation.dismissError}
+              {...(conversation.error.code === 'user_key_required'
+                ? {
+                    // A missing key is fixable by the learner, so send them
+                    // straight to the page that explains how to get one.
+                    actionLabel: 'Schlüssel einrichten',
+                    onAction: () => router.push('/api-key-help'),
+                  }
+                : {})}
             />
           ) : null}
 

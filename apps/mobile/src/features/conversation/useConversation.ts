@@ -67,7 +67,7 @@ export interface UseConversation {
   state: MicState;
   entries: TranscriptEntry[];
   session: ConversationSession | null;
-  error: { message: string; retryable: boolean } | null;
+  error: { message: string; retryable: boolean; code?: string } | null;
   elapsedSec: number;
   phaseTitle: string | null;
   phaseProgress: number;
@@ -92,7 +92,7 @@ export function useConversation(options: UseConversationOptions): UseConversatio
   const [session, setSession] = useState<ConversationSession | null>(null);
   const [entries, setEntries] = useState<TranscriptEntry[]>([]);
   const [state, setState] = useState<MicState>('idle');
-  const [error, setError] = useState<{ message: string; retryable: boolean } | null>(null);
+  const [error, setError] = useState<{ message: string; retryable: boolean; code?: string } | null>(null);
   const [elapsedSec, setElapsedSec] = useState(0);
   const [levelChangedTo, setLevelChangedTo] = useState<CefrLevel | null>(null);
   const [activeLevel, setActiveLevel] = useState<CefrLevel>(options.level);
@@ -282,6 +282,7 @@ export function useConversation(options: UseConversationOptions): UseConversatio
           message:
             apiError?.userMessage ?? 'Etwas ist schiefgelaufen. Bitte versuche es noch einmal.',
           retryable: apiError?.retryable ?? true,
+          code: apiError?.code,
         });
       }
     },

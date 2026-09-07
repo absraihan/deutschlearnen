@@ -57,3 +57,45 @@ describe('speech engine selection', () => {
     expect(conversation).toContain('speechEngine');
   });
 });
+
+/**
+ * The key-help route.
+ *
+ * "Add your own key in Settings" is only half an instruction without saying
+ * where a key comes from. These pin that the guidance exists, is reachable
+ * from both the settings screen and the error a learner actually hits, and
+ * carries a real link rather than prose describing one.
+ */
+describe('AI key help', () => {
+  const help = fs.readFileSync(path.join(APP_DIR, 'api-key-help.tsx'), 'utf8');
+
+  it('links to the page where a key is actually created', () => {
+    expect(help).toContain('https://aistudio.google.com/apikey');
+    expect(help).toContain('Linking.openURL');
+  });
+
+  it('lets the learner paste the key without navigating away', () => {
+    expect(help).toContain('TextInput');
+    expect(help).toContain('userAiKey');
+  });
+
+  it('explains the cost and where the key is stored', () => {
+    expect(help).toMatch(/Kreditkarte/);
+    expect(help).toMatch(/auf diesem Gerät/);
+  });
+
+  it('offers Bangla for a Bangla-speaking learner', () => {
+    expect(help).toContain('banglaExplanations');
+    expect(help).toMatch(/[ঀ-৿]/); // Bangla script is actually present
+  });
+
+  it('is reachable from settings', () => {
+    expect(readScreen('(tabs)/settings.tsx')).toContain('/api-key-help');
+  });
+
+  it('is offered on the error that a missing key produces', () => {
+    const conversation = readScreen('conversation.tsx');
+    expect(conversation).toContain('user_key_required');
+    expect(conversation).toContain('/api-key-help');
+  });
+});

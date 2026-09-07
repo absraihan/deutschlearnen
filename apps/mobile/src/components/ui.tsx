@@ -429,11 +429,20 @@ export function ErrorBanner({
   onRetry,
   onDismiss,
   retryLabel = 'Nochmal',
+  actionLabel,
+  onAction,
 }: {
   message: string;
   onRetry?: () => void;
   onDismiss?: () => void;
   retryLabel?: string;
+  /**
+   * A way out of the error, not just away from it. Some failures are fixable
+   * by the learner - a missing AI key, for instance - and telling them what is
+   * wrong without offering the fix leaves them stuck.
+   */
+  actionLabel?: string;
+  onAction?: () => void;
 }) {
   const theme = useTheme();
   return (
@@ -449,6 +458,9 @@ export function ErrorBanner({
       <Text variant="body" tone="danger">
         {message}
       </Text>
+      {actionLabel && onAction ? (
+        <Button label={actionLabel} onPress={onAction} size="sm" />
+      ) : null}
       <View style={{ flexDirection: 'row', gap: theme.spacing.sm }}>
         {onRetry ? (
           <Button label={retryLabel} onPress={onRetry} size="sm" variant="secondary" style={{ flex: 1 }} />

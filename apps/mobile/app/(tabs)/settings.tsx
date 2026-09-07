@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Alert, Switch, TextInput, View } from 'react-native';
+import { useRouter } from 'expo-router';
 import { useQuery } from '@tanstack/react-query';
 import {
   CEFR_LEVELS,
@@ -41,6 +42,7 @@ const CORRECTION_LABELS: Record<CorrectionMode, { title: string; body: string }>
 
 export default function SettingsScreen() {
   const theme = useTheme();
+  const router = useRouter();
   const settings = useSettingsStore((s) => s.settings);
   const update = useSettingsStore((s) => s.update);
   const [busy, setBusy] = useState(false);
@@ -414,9 +416,14 @@ export default function SettingsScreen() {
             onPress={() => void update({ userAiKey: '' })}
           />
         ) : null}
-        <Text variant="caption" tone="subtle" style={{ marginTop: theme.spacing.sm }}>
-          Kostenlosen Schlüssel holen: aistudio.google.com/apikey
-        </Text>
+        <Button
+          label="Anleitung: Schlüssel holen"
+          icon="📖"
+          variant="secondary"
+          size="sm"
+          style={{ marginTop: theme.spacing.md }}
+          onPress={() => router.push('/api-key-help')}
+        />
       </Card>
 
       <SectionHeader title="Datenschutz" />
