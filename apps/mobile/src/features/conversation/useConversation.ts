@@ -119,6 +119,9 @@ export function useConversation(options: UseConversationOptions): UseConversatio
   useEffect(() => {
     let cancelled = false;
 
+    // The server may have gone back to sleep while the app sat idle.
+    api.warmUp();
+
     const boot = async (): Promise<void> => {
       const memory = await memoryRepository.get(options.level);
       const level = settings.adaptiveDifficulty ? memory.difficultyLevel : options.level;

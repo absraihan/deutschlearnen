@@ -5,6 +5,7 @@ import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { getDatabase } from '@/database';
+import { api } from '@/services/api';
 import { useSettingsStore } from '@/store/settings';
 import { ThemeProvider, useTheme } from '@/theme';
 import { Text, Button } from '@/components/ui';
@@ -39,6 +40,9 @@ export default function RootLayout() {
     try {
       await getDatabase();
       await loadSettings();
+      // Free hosting sleeps when idle. Start waking it now so the learner's
+      // first sentence does not pay the cold start.
+      api.warmUp();
       setStatus('ready');
     } catch (error) {
       setErrorMessage((error as Error).message);

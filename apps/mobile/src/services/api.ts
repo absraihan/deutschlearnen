@@ -65,7 +65,27 @@ function authHeaders(): Record<string, string> {
 /** Default per-request timeout. Speech endpoints override it. */
 const DEFAULT_TIMEOUT_MS = 45_000;
 
-async function requestJson<T>(
+/**
+ * Free hosting tiers sleep when idle and take tens of seconds to wake. The
+ * first request after that either hangs past the timeout or is refused
+ * outright, which reached the learner as "no connection" on a perfectly good
+ * mobile connection.
+ *
+ * Two things fix it, both here:
+ *  - `warmUp()` pokes /health when a screen opens, so the server is waking
+ *    while the learner is still reading the greeting.
+ *  - one retry on a dropped connection. The server is stateless, so replaying
+ *    a turn is safe - it creates no duplicate state.
+ */
+const TRANSPORT_RETRY_DELAY_MS = 1200;
+
+function isTransport(error: unknown): boolean {
+  return error instanceof ApiClientError && (error.code === 'offline' || error.code === 'timeout');
+}
+
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+async function requestOnce<T>(
   path: string,
   init: RequestInit & { timeoutMs?: number } = {},
 ): Promise<T> {
@@ -120,6 +140,24 @@ async function requestJson<T>(
   return (await response.json()) as T;
 }
 
+/**
+ * One retry on a dropped connection or timeout. Only transport failures are
+ * retried: an HTTP error is a real answer from the server and replaying it
+ * would just double the wait.
+ */
+async function requestJson<T>(
+  path: string,
+  init: RequestInit & { timeoutMs?: number; retry?: boolean } = {},
+): Promise<T> {
+  try {
+    return await requestOnce<T>(path, init);
+  } catch (error) {
+    if (init.retry === false || !isTransport(error)) throw error;
+    await sleep(TRANSPORT_RETRY_DELAY_MS);
+    return requestOnce<T>(path, init);
+  }
+}
+
 export interface HealthResponse {
   status: string;
   appName: string;
@@ -148,6 +186,21 @@ export const api = {
 
   async health(): Promise<HealthResponse> {
     return requestJson<HealthResponse>('/health', { method: 'GET', timeoutMs: 8000 });
+  },
+
+  /**
+   * Wake a sleeping server without blocking anything.
+   *
+   * Free hosting spins down when idle and takes tens of seconds to come back.
+   * Called when a screen opens, this starts the wake-up while the learner is
+   * still reading the greeting, so their first sentence lands on a live server.
+   * Deliberately fire-and-forget: it must never surface an error or delay the
+   * UI, and a generous timeout is fine because nothing waits on it.
+   */
+  warmUp(): void {
+    void requestOnce<HealthResponse>('/health', { method: 'GET', timeoutMs: 60_000 }).catch(
+      () => undefined,
+    );
   },
 
   async capabilities(): Promise<SpeechCapabilities> {

@@ -49,10 +49,17 @@ export async function buildApp({ env, overrides }: BuildAppOptions): Promise<Fas
     reply.send({ name: env.APP_NAME || DEFAULT_APP_NAME, status: 'ok' }),
   );
 
+  // Set by the platform (Render exposes RENDER_GIT_COMMIT). Lets us tell which
+  // build is actually live instead of guessing whether a deploy landed.
+  const commit = (process.env.RENDER_GIT_COMMIT ?? process.env.GIT_COMMIT ?? 'dev').slice(0, 8);
+  const startedAt = new Date().toISOString();
+
   app.get('/health', async (_request, reply) =>
     reply.send({
       status: 'ok',
       appName: env.APP_NAME,
+      commit,
+      startedAt,
       ai: { provider: ctx.ai.name, model: ctx.ai.model },
       stt: { provider: ctx.stt.name },
       tts: { provider: ctx.tts.name },

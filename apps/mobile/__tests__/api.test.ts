@@ -126,3 +126,60 @@ describe('ApiClientError mapping', () => {
     delete process.env.EXPO_PUBLIC_API_TOKEN;
   });
 });
+
+/**
+ * Cold-start resilience.
+ *
+ * Free hosting sleeps when idle. On a real device this surfaced as "no
+ * connection" on a perfectly good mobile network, because the first request
+ * after the server slept was refused outright.
+ */
+describe('transport retry and warm-up', () => {
+  const originalFetch = global.fetch;
+  afterEach(() => {
+    global.fetch = originalFetch;
+    jest.restoreAllMocks();
+  });
+
+  const ok = (body: unknown) =>
+    ({ ok: true, status: 200, json: async () => body }) as unknown as Response;
+
+  it('retries once when the connection is refused, then succeeds', async () => {
+    const spy = jest
+      .fn()
+      .mockRejectedValueOnce(new TypeError('Network request failed'))
+      .mockResolvedValueOnce(ok({ status: 'ok' }));
+    global.fetch = spy as unknown as typeof fetch;
+
+    await expect(api.health()).resolves.toMatchObject({ status: 'ok' });
+    expect(spy).toHaveBeenCalledTimes(2);
+  });
+
+  it('gives up after one retry rather than hanging the learner', async () => {
+    const spy = jest.fn().mockRejectedValue(new TypeError('Network request failed'));
+    global.fetch = spy as unknown as typeof fetch;
+
+    await expect(api.health()).rejects.toMatchObject({ code: 'offline' });
+    expect(spy).toHaveBeenCalledTimes(2);
+  });
+
+  it('does not retry a real HTTP error, which is an answer not a dropped call', async () => {
+    const spy = jest.fn().mockResolvedValue({
+      ok: false,
+      status: 401,
+      json: async () => ({ error: { code: 'unauthorized', userMessage: 'x', retryable: false } }),
+    } as unknown as Response);
+    global.fetch = spy as unknown as typeof fetch;
+
+    await expect(api.health()).rejects.toMatchObject({ code: 'unauthorized' });
+    expect(spy).toHaveBeenCalledTimes(1);
+  });
+
+  it('warmUp never throws, even when the server is unreachable', async () => {
+    global.fetch = jest
+      .fn()
+      .mockRejectedValue(new TypeError('Network request failed')) as unknown as typeof fetch;
+    expect(() => api.warmUp()).not.toThrow();
+    await new Promise((r) => setTimeout(r, 0));
+  });
+});
