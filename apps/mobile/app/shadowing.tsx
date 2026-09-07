@@ -23,9 +23,8 @@ import {
   SectionHeader,
   Text,
 } from '@/components/ui';
-import { speak, stopSpeaking } from '@/services/speech/tts';
-import { useRecorder } from '@/hooks/useRecorder';
-import { SpeechError, transcribeRecording } from '@/services/speech/stt';
+import { speak } from '@/services/speech/tts';
+import { useSpeechCapture } from '@/hooks/useSpeechCapture';
 
 /**
  * Shadowing.
@@ -40,7 +39,7 @@ export default function ShadowingScreen() {
   const router = useRouter();
   const params = useLocalSearchParams<{ level?: string }>();
   const settings = useSettingsStore((s) => s.settings);
-  const recorder = useRecorder();
+  const speech = useSpeechCapture();
 
   const level: CefrLevel = isValidLevel(params.level) ? params.level : settings.currentLevel;
 
@@ -48,7 +47,6 @@ export default function ShadowingScreen() {
   const [transcript, setTranscript] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<PronunciationAnalysis | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [busy, setBusy] = useState(false);
 
   const set = useQuery({
     queryKey: ['shadowing', level],
@@ -71,27 +69,15 @@ export default function ShadowingScreen() {
 
   const record = async (): Promise<void> => {
     setError(null);
-    await stopSpeaking();
 
-    if (!recorder.isRecording) {
-      try {
-        await recorder.start();
-      } catch (err) {
-        setError(err instanceof SpeechError ? err.userMessage : 'Aufnahme fehlgeschlagen.');
-      }
-      return;
-    }
+    // Capture through the shared hook so this screen honours the learner's
+    // speech-engine setting instead of always calling server transcription.
+    const result = await speech.toggle(current?.text);
+    if (!result) return;
 
-    setBusy(true);
-    const recording = await recorder.stop();
+    setTranscript(result.text);
+
     try {
-      const result = await transcribeRecording({
-        uri: recording.uri,
-        durationMs: recording.durationMs,
-        contextPrompt: current?.text,
-      });
-      setTranscript(result.text);
-
       const evaluation = await api.evaluatePronunciation({
         transcript: result.text,
         targetText: current?.text ?? null,
@@ -101,15 +87,13 @@ export default function ShadowingScreen() {
       });
       setFeedback(evaluation.pronunciation);
     } catch (err) {
+      // The transcript is already on screen and useful on its own, so a failed
+      // pronunciation call degrades rather than discarding what was captured.
       setError(
-        err instanceof SpeechError
+        err instanceof ApiClientError
           ? err.userMessage
-          : err instanceof ApiClientError
-            ? err.userMessage
-            : 'Die Auswertung hat nicht funktioniert.',
+          : 'Die Aussprache-Auswertung hat nicht funktioniert.',
       );
-    } finally {
-      setBusy(false);
     }
   };
 
@@ -191,18 +175,21 @@ export default function ShadowingScreen() {
 
         <Button label="Anhören" icon="🔊" style={{ marginTop: theme.spacing.lg }} onPress={play} />
         <Button
-          label={busy ? 'Wird ausgewertet...' : recorder.isRecording ? 'Aufnahme beenden' : 'Nachsprechen'}
-          icon={recorder.isRecording ? '⏹' : '🎤'}
+          label={speech.isProcessing ? 'Wird ausgewertet...' : speech.isRecording ? 'Aufnahme beenden' : 'Nachsprechen'}
+          icon={speech.isRecording ? '⏹' : '🎤'}
           variant="secondary"
-          loading={busy}
+          loading={speech.isProcessing}
           style={{ marginTop: theme.spacing.sm }}
           onPress={() => void record()}
         />
       </Card>
 
-      {error ? (
+      {error || speech.error ? (
         <View style={{ marginTop: theme.spacing.lg }}>
-          <ErrorBanner message={error} onDismiss={() => setError(null)} />
+          <ErrorBanner
+            message={error ?? speech.error ?? ''}
+            onDismiss={() => { setError(null); speech.clearError(); }}
+          />
         </View>
       ) : null}
 

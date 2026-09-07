@@ -19,8 +19,7 @@ import {
   Text,
 } from '@/components/ui';
 import { speak, stopSpeaking } from '@/services/speech/tts';
-import { useRecorder } from '@/hooks/useRecorder';
-import { SpeechError, transcribeRecording } from '@/services/speech/stt';
+import { useSpeechCapture } from '@/hooks/useSpeechCapture';
 
 /**
  * Listening practice.
@@ -34,7 +33,7 @@ export default function ListeningScreen() {
   const router = useRouter();
   const params = useLocalSearchParams<{ level?: string }>();
   const settings = useSettingsStore((s) => s.settings);
-  const recorder = useRecorder();
+  const speech = useSpeechCapture();
 
   const level: CefrLevel = isValidLevel(params.level) ? params.level : settings.currentLevel;
 
@@ -42,8 +41,6 @@ export default function ListeningScreen() {
   const [speed, setSpeed] = useState<number>(1);
   const [showText, setShowText] = useState(false);
   const [answer, setAnswer] = useState<string | null>(null);
-  const [speechError, setSpeechError] = useState<string | null>(null);
-  const [busy, setBusy] = useState(false);
 
   const items = useQuery({
     queryKey: ['listening', level],
@@ -76,45 +73,15 @@ export default function ListeningScreen() {
   };
 
   const answerAloud = async (): Promise<void> => {
-    setSpeechError(null);
-    await stopSpeaking();
-
-    if (recorder.isRecording) {
-      setBusy(true);
-      const recording = await recorder.stop();
-      try {
-        const result = await transcribeRecording({
-          uri: recording.uri,
-          durationMs: recording.durationMs,
-          contextPrompt: current?.text,
-        });
-        setAnswer(result.text);
-      } catch (error) {
-        setSpeechError(
-          error instanceof SpeechError
-            ? error.userMessage
-            : 'Die Aufnahme konnte nicht verarbeitet werden.',
-        );
-      } finally {
-        setBusy(false);
-      }
-      return;
-    }
-
-    try {
-      await recorder.start();
-    } catch (error) {
-      setSpeechError(
-        error instanceof SpeechError ? error.userMessage : 'Die Aufnahme konnte nicht starten.',
-      );
-    }
+    const result = await speech.toggle(current?.text);
+    if (result) setAnswer(result.text);
   };
 
   const next = (): void => {
     setIndex((i) => i + 1);
     setShowText(false);
     setAnswer(null);
-    setSpeechError(null);
+    speech.clearError();
   };
 
   if (items.isLoading) {
@@ -226,21 +193,21 @@ export default function ListeningScreen() {
 
         <Button
           label={
-            busy
+            speech.isProcessing
               ? 'Wird erkannt...'
-              : recorder.isRecording
+              : speech.isRecording
                 ? 'Aufnahme beenden'
                 : 'Antwort sprechen'
           }
-          icon={recorder.isRecording ? '⏹' : '🎤'}
-          loading={busy}
+          icon={speech.isRecording ? '⏹' : '🎤'}
+          loading={speech.isProcessing}
           style={{ marginTop: theme.spacing.lg }}
           onPress={() => void answerAloud()}
         />
 
-        {speechError ? (
+        {speech.error ? (
           <View style={{ marginTop: theme.spacing.md }}>
-            <ErrorBanner message={speechError} onDismiss={() => setSpeechError(null)} />
+            <ErrorBanner message={speech.error} onDismiss={() => speech.clearError()} />
           </View>
         ) : null}
 
