@@ -84,6 +84,11 @@ export interface UserSettings {
   adaptiveDifficulty: boolean;
   hapticsEnabled: boolean;
   theme: 'system' | 'light' | 'dark';
+  /**
+   * The learner's own AI key, stored only on this device and sent per request.
+   * Empty means the server uses its own key, when it is configured to allow it.
+   */
+  userAiKey: string;
 }
 
 export interface ConversationSession {

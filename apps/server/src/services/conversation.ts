@@ -19,11 +19,27 @@ import { AIProviderError } from '../providers/ai/types';
  */
 export class ConversationService {
   constructor(
-    private readonly ai: AIProvider,
+    private readonly ai: AIProvider | null,
     private readonly options: { maxPromptTokens: number },
   ) {}
 
-  async respond(request: RespondRequest): Promise<RespondResponse> {
+  /**
+   * @param provider the AI to use for this turn. Defaults to the server's own,
+   *   but a learner supplying their own key gets a provider built from it.
+   */
+  async respond(request: RespondRequest, provider?: AIProvider): Promise<RespondResponse> {
+    const ai = provider ?? this.ai;
+    if (!ai) {
+      throw new AIProviderError({
+        code: 'user_key_required',
+        message: 'No AI provider available for this request',
+        userMessage:
+          'Bitte trage deinen eigenen KI-Schlüssel in den Einstellungen ein.',
+        retryable: false,
+        status: 402,
+      });
+    }
+
     const trimmed = trimConversation(request.history);
 
     let runningSummary = request.runningSummary ?? null;
@@ -32,7 +48,7 @@ export class ConversationService {
     // summarisation call on a three-turn conversation is wasted money.
     if (trimmed.needsSummary && trimmed.toSummarise.length >= 4) {
       try {
-        const summary = await this.ai.summarizeContext(renderTranscript(trimmed.toSummarise));
+        const summary = await ai.summarizeContext(renderTranscript(trimmed.toSummarise));
         runningSummary = mergeSummaries(runningSummary, summary.value);
       } catch {
         // A failed summary must not fail the learner's turn: fall back to the
@@ -49,7 +65,7 @@ export class ConversationService {
 
     this.assertWithinBudget(effective);
 
-    const result = await this.ai.generateConversationResponse(effective);
+    const result = await ai.generateConversationResponse(effective);
 
     return {
       turn: result.value,

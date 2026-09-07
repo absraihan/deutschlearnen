@@ -4,7 +4,7 @@ import {
   type CefrLevel,
 } from '@deutschlearnen/shared';
 import type { FastifyInstance } from 'fastify';
-import type { AppContext } from '../context';
+import { userAiKeyFrom, type AppContext } from '../context';
 
 export async function conversationRoutes(
   app: FastifyInstance,
@@ -16,7 +16,7 @@ export async function conversationRoutes(
    */
   app.post('/api/conversation/respond', async (request, reply) => {
     const body = RespondRequestSchema.parse(request.body);
-    const result = await ctx.conversation.respond(body);
+    const result = await ctx.conversation.respond(body, ctx.aiFor(userAiKeyFrom(request.headers)));
 
     request.log.info(
       {
@@ -36,7 +36,7 @@ export async function conversationRoutes(
   /** Deep analysis of a single sentence, used by the correction detail screen. */
   app.post('/api/conversation/analyze', async (request, reply) => {
     const body = AnalyzeRequestSchema.parse(request.body);
-    const result = await ctx.ai.analyzeGrammar(body);
+    const result = await ctx.aiFor(userAiKeyFrom(request.headers)).analyzeGrammar(body);
     return reply.send({ analysis: result.value, usage: result.usage });
   });
 

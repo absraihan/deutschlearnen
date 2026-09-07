@@ -57,9 +57,26 @@ function baseUrl(): string {
   return raw.replace(/\/$/, '');
 }
 
+/**
+ * Set by the settings store whenever the learner's own AI key changes.
+ *
+ * Read through a setter rather than importing the store here: the store
+ * imports the speech services, which import this module, and a direct import
+ * would close that cycle.
+ */
+let userAiKey = '';
+export function setUserAiKey(key: string): void {
+  userAiKey = key.trim();
+}
+
 function authHeaders(): Record<string, string> {
   const token = process.env.EXPO_PUBLIC_API_TOKEN;
-  return token ? { 'x-api-token': token } : {};
+  return {
+    ...(token ? { 'x-api-token': token } : {}),
+    // Sent per request and never stored server-side, so the server can answer
+    // on the learner's own quota instead of the owner's.
+    ...(userAiKey ? { 'x-user-ai-key': userAiKey } : {}),
+  };
 }
 
 /** Default per-request timeout. Speech endpoints override it. */

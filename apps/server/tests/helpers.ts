@@ -16,6 +16,7 @@ export const testEnv: Env = {
   TTS_PROVIDER: 'none',
   TTS_MODEL: 'gpt-4o-mini-tts',
   TTS_VOICE: 'alloy',
+  ALLOW_SERVER_KEY_FALLBACK: true,
   CORS_ORIGIN: '*',
   REQUEST_TIMEOUT_MS: 45_000,
   RATE_LIMIT_MAX: 10_000,

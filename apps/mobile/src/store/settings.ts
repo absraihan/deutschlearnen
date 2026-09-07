@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { DEFAULT_APP_NAME, DEFAULT_SETTINGS, type UserSettings } from '@deutschlearnen/shared';
 import { settingsRepository } from '@/database/repositories';
 import { isNativeRecognitionAvailable } from '@/services/speech/stt';
+import { setUserAiKey } from '@/services/api';
 
 /**
  * Settings store.
@@ -38,21 +39,25 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
 
     if (!hadSettings && isNativeRecognitionAvailable()) {
       const firstRun = { ...stored, speechEngine: 'native' as const };
+      setUserAiKey(firstRun.userAiKey);
       await settingsRepository.save(firstRun);
       set({ settings: { ...firstRun, appName: APP_NAME }, loaded: true });
       return;
     }
 
+    setUserAiKey(stored.userAiKey);
     set({ settings: { ...stored, appName: APP_NAME }, loaded: true });
   },
 
   async update(partial) {
     const next = await settingsRepository.patch(partial);
+    setUserAiKey(next.userAiKey);
     set({ settings: { ...next, appName: APP_NAME } });
   },
 
   async reset() {
     const next = await settingsRepository.reset();
+    setUserAiKey(next.userAiKey);
     set({ settings: { ...next, appName: APP_NAME } });
   },
 }));

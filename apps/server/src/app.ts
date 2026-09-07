@@ -60,10 +60,12 @@ export async function buildApp({ env, overrides }: BuildAppOptions): Promise<Fas
       appName: env.APP_NAME,
       commit,
       startedAt,
-      ai: { provider: ctx.ai.name, model: ctx.ai.model },
+      ai: { provider: ctx.ai?.name ?? env.AI_PROVIDER, model: ctx.ai?.model ?? null },
       stt: { provider: ctx.stt.name },
       tts: { provider: ctx.tts.name },
       authRequired: Boolean(env.API_TOKEN),
+      // Tells the app whether the learner must supply their own AI key.
+      userKeyRequired: !env.ALLOW_SERVER_KEY_FALLBACK,
       time: new Date().toISOString(),
     }),
   );

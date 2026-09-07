@@ -45,6 +45,7 @@ export const DEFAULT_SETTINGS: UserSettings = {
   adaptiveDifficulty: true,
   hapticsEnabled: true,
   theme: 'system',
+  userAiKey: '',
 };
 
 /** Explanation languages implied by the settings toggles. */

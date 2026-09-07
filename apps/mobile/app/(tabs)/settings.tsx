@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Alert, Switch, View } from 'react-native';
+import { Alert, Switch, TextInput, View } from 'react-native';
 import { useQuery } from '@tanstack/react-query';
 import {
   CEFR_LEVELS,
@@ -368,6 +368,55 @@ export default function SettingsScreen() {
           style={{ marginTop: theme.spacing.md }}
           onPress={() => void health.refetch()}
         />
+      </Card>
+
+      <SectionHeader title="Eigener KI-Schlüssel" />
+      <Card>
+        <Text variant="caption" tone="muted">
+          Optional. Mit einem eigenen Schlüssel laufen deine Gespräche über dein
+          eigenes Google-AI-Studio-Konto. Der Schlüssel bleibt auf diesem Gerät und
+          wird nur für deine eigenen Anfragen mitgeschickt – nie gespeichert.
+        </Text>
+        <TextInput
+          value={settings.userAiKey}
+          onChangeText={(value) => void update({ userAiKey: value.trim() })}
+          placeholder="AI... (leer lassen für den Server-Schlüssel)"
+          placeholderTextColor={theme.colors.textSubtle}
+          autoCapitalize="none"
+          autoCorrect={false}
+          secureTextEntry
+          accessibilityLabel="Eigener KI-Schlüssel"
+          style={{
+            marginTop: theme.spacing.md,
+            height: 48,
+            borderRadius: theme.radius.md,
+            borderWidth: 1,
+            borderColor: theme.colors.border,
+            backgroundColor: theme.colors.background,
+            color: theme.colors.text,
+            paddingHorizontal: theme.spacing.md,
+            fontSize: 15,
+          }}
+        />
+        <Row style={{ marginTop: theme.spacing.sm, alignItems: 'center' }} gap={8}>
+          <Text variant="caption" tone={settings.userAiKey ? 'success' : 'subtle'}>
+            {settings.userAiKey
+              ? `Eigener Schlüssel aktiv (${settings.userAiKey.length} Zeichen)`
+              : 'Kein eigener Schlüssel – der Server antwortet, falls er darf.'}
+          </Text>
+        </Row>
+        {settings.userAiKey ? (
+          <Button
+            label="Schlüssel entfernen"
+            variant="ghost"
+            size="sm"
+            style={{ marginTop: theme.spacing.sm }}
+            onPress={() => void update({ userAiKey: '' })}
+          />
+        ) : null}
+        <Text variant="caption" tone="subtle" style={{ marginTop: theme.spacing.sm }}>
+          Kostenlosen Schlüssel holen: aistudio.google.com/apikey
+        </Text>
       </Card>
 
       <SectionHeader title="Datenschutz" />

@@ -57,6 +57,16 @@ const EnvSchema = z.object({
    */
   API_TOKEN: optionalString(),
 
+  /**
+   * When false, a request must carry the learner's own AI key. Set it false
+   * before sharing the app: the server then spends nobody's quota but the
+   * caller's own.
+   */
+  ALLOW_SERVER_KEY_FALLBACK: z
+    .string()
+    .default('true')
+    .transform((v) => v !== 'false'),
+
   /** Comma-separated allowed origins, or '*' for any. */
   CORS_ORIGIN: z.string().default('*'),
 
@@ -84,14 +94,17 @@ function parseEnv(): Env {
   const env = parsed.data;
 
   // Fail fast on a provider selected without its key, rather than at the first
-  // conversation turn the learner tries to have.
-  if (env.AI_PROVIDER === 'openai' && !env.OPENAI_API_KEY) {
+  // conversation turn the learner tries to have. Skipped when the server never
+  // uses its own key: with the fallback off, every request brings the caller's.
+  const needsOwnKey = env.ALLOW_SERVER_KEY_FALLBACK;
+
+  if (needsOwnKey && env.AI_PROVIDER === 'openai' && !env.OPENAI_API_KEY) {
     throw new Error('AI_PROVIDER=openai requires OPENAI_API_KEY. See .env.example.');
   }
-  if (env.AI_PROVIDER === 'anthropic' && !env.ANTHROPIC_API_KEY) {
+  if (needsOwnKey && env.AI_PROVIDER === 'anthropic' && !env.ANTHROPIC_API_KEY) {
     throw new Error('AI_PROVIDER=anthropic requires ANTHROPIC_API_KEY. See .env.example.');
   }
-  if (env.AI_PROVIDER === 'gemini' && !env.GEMINI_API_KEY) {
+  if (needsOwnKey && env.AI_PROVIDER === 'gemini' && !env.GEMINI_API_KEY) {
     throw new Error('AI_PROVIDER=gemini requires GEMINI_API_KEY. Get a free key at https://aistudio.google.com/apikey');
   }
   if (env.STT_PROVIDER === 'openai-whisper' && !env.OPENAI_API_KEY) {

@@ -387,3 +387,66 @@ describe('unknown routes', () => {
     expect(res.json().error.userMessage).toBeTruthy();
   });
 });
+
+/**
+ * Learner-supplied AI keys.
+ *
+ * This is what makes the app shareable: with the server-key fallback off, the
+ * server spends nobody's quota but the caller's own, so the APK can be handed
+ * out without handing out the owner's Gemini budget.
+ */
+describe('user-supplied AI key', () => {
+  it('uses the server key when the fallback is allowed', async () => {
+    app = await makeApp();
+    const res = await app.inject({
+      method: 'POST',
+      url: '/api/conversation/respond',
+      payload: respondBody('Hallo'),
+    });
+    expect(res.statusCode).toBe(200);
+  });
+
+  it('refuses without a user key once the fallback is off', async () => {
+    app = await makeApp({ ai: undefined }, { ALLOW_SERVER_KEY_FALLBACK: false });
+    const res = await app.inject({
+      method: 'POST',
+      url: '/api/conversation/respond',
+      payload: respondBody('Hallo'),
+    });
+    expect(res.statusCode).toBe(402);
+    expect(res.json().error.code).toBe('user_key_required');
+    expect(res.json().error.userMessage).toContain('Einstellungen');
+  });
+
+  it('accepts a request that brings its own key', async () => {
+    app = await makeApp({ ai: undefined }, { ALLOW_SERVER_KEY_FALLBACK: false, AI_PROVIDER: 'mock' });
+    const res = await app.inject({
+      method: 'POST',
+      url: '/api/conversation/respond',
+      headers: { 'x-user-ai-key': 'learner-supplied-key' },
+      payload: respondBody('Gestern ich habe zum Markt gegangen.'),
+    });
+    expect(res.statusCode).toBe(200);
+    expect(res.json().turn.correction.corrected).toBe('Gestern bin ich zum Markt gegangen.');
+  });
+
+  it('tells the app whether a key is required', async () => {
+    app = await makeApp({}, { ALLOW_SERVER_KEY_FALLBACK: false });
+    expect((await app.inject({ method: 'GET', url: '/health' })).json().userKeyRequired).toBe(true);
+
+    await app.close();
+    app = await makeApp();
+    expect((await app.inject({ method: 'GET', url: '/health' })).json().userKeyRequired).toBe(false);
+  });
+
+  it('never echoes the key back to the caller', async () => {
+    app = await makeApp({ ai: undefined }, { ALLOW_SERVER_KEY_FALLBACK: false, AI_PROVIDER: 'mock' });
+    const res = await app.inject({
+      method: 'POST',
+      url: '/api/conversation/respond',
+      headers: { 'x-user-ai-key': 'super-secret-key' },
+      payload: respondBody('Hallo'),
+    });
+    expect(res.body).not.toContain('super-secret-key');
+  });
+});

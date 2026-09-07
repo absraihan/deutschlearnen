@@ -15,34 +15,34 @@ import {
 } from '@deutschlearnen/shared';
 import type { FastifyInstance } from 'fastify';
 import { z } from 'zod';
-import type { AppContext } from '../context';
+import { userAiKeyFrom, type AppContext } from '../context';
 
 export async function learningRoutes(app: FastifyInstance, ctx: AppContext): Promise<void> {
   /** Vocabulary for a topic and level. */
   app.post('/api/vocabulary/generate', async (request, reply) => {
     const body = GenerateVocabularyRequestSchema.parse(request.body);
-    const result = await ctx.ai.generateVocabulary(body);
+    const result = await ctx.aiFor(userAiKeyFrom(request.headers)).generateVocabulary(body);
     return reply.send({ items: result.value, usage: result.usage });
   });
 
   /** Targeted drills built from the learner's recurring mistakes. */
   app.post('/api/exercises/generate', async (request, reply) => {
     const body = GenerateExerciseRequestSchema.parse(request.body);
-    const result = await ctx.ai.generateExercise(body);
+    const result = await ctx.aiFor(userAiKeyFrom(request.headers)).generateExercise(body);
     return reply.send({ ...result.value, usage: result.usage });
   });
 
   /** Listening comprehension passages. */
   app.post('/api/listening/generate', async (request, reply) => {
     const body = ListeningRequestSchema.parse(request.body);
-    const result = await ctx.ai.generateListening(body);
+    const result = await ctx.aiFor(userAiKeyFrom(request.headers)).generateListening(body);
     return reply.send({ items: result.value, usage: result.usage });
   });
 
   /** Shadowing sentences. */
   app.post('/api/shadowing/generate', async (request, reply) => {
     const body = ShadowingRequestSchema.parse(request.body);
-    const result = await ctx.ai.generateShadowing(body);
+    const result = await ctx.aiFor(userAiKeyFrom(request.headers)).generateShadowing(body);
     return reply.send({ ...result.value, usage: result.usage });
   });
 
@@ -98,7 +98,7 @@ export async function learningRoutes(app: FastifyInstance, ctx: AppContext): Pro
 
     let drills = null;
     if (body.generateDrills && ranked.length > 0) {
-      const result = await ctx.ai.generateExercise({
+      const result = await ctx.aiFor(userAiKeyFrom(request.headers)).generateExercise({
         level: body.level,
         count: body.drillCount,
         mistakes: ranked.slice(0, 5).map((m) => ({

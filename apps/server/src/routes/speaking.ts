@@ -5,7 +5,7 @@ import {
   MAX_UTTERANCE_MS,
 } from '@deutschlearnen/shared';
 import type { FastifyInstance } from 'fastify';
-import type { AppContext } from '../context';
+import { userAiKeyFrom, type AppContext } from '../context';
 import { AIProviderError } from '../providers/ai/types';
 
 const MAX_AUDIO_BYTES = 8 * 1024 * 1024;
@@ -15,14 +15,16 @@ export async function speakingRoutes(app: FastifyInstance, ctx: AppContext): Pro
   app.post('/api/speaking/evaluate', async (request, reply) => {
     const body = EvaluateSpeakingRequestSchema.parse(request.body);
     const hasAudioScoring = ctx.stt.supportsPronunciationScoring && body.hasAudioScoring;
-    const result = await ctx.ai.analyzePronunciation({ ...body, hasAudioScoring });
+    const result = await ctx
+      .aiFor(userAiKeyFrom(request.headers))
+      .analyzePronunciation({ ...body, hasAudioScoring });
     return reply.send({ pronunciation: result.value, usage: result.usage });
   });
 
   /** End-of-session scores and feedback. */
   app.post('/api/session/summary', async (request, reply) => {
     const body = SessionSummaryRequestSchema.parse(request.body);
-    const result = await ctx.ai.evaluateSpeakingSession(body);
+    const result = await ctx.aiFor(userAiKeyFrom(request.headers)).evaluateSpeakingSession(body);
     request.log.info(
       { sessionId: body.sessionId, overall: result.value.overallScore },
       'session evaluated',
