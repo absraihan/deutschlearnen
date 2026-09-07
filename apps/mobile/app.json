@@ -16,7 +16,7 @@
     ],
     "android": {
       "package": "com.deutschlearnen.app",
-      "versionCode": 3,
+      "versionCode": 4,
       "adaptiveIcon": {
         "backgroundColor": "#0B1220"
       },
@@ -51,14 +51,6 @@
           "androidSpeechServicePackages": [
             "com.google.android.googlequicksearchbox"
           ]
-        }
-      ],
-      [
-        "expo-build-properties",
-        {
-          "android": {
-            "usesCleartextTraffic": true
-          }
         }
       ]
     ],

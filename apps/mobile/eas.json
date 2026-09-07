@@ -12,7 +12,7 @@
       },
       "env": {
         "EXPO_PUBLIC_APP_NAME": "DeutschLearnen",
-        "EXPO_PUBLIC_API_URL": "http://192.168.68.107:4000"
+        "EXPO_PUBLIC_API_URL": "https://deutschlearnen-server.onrender.com"
       }
     },
     "preview": {
@@ -22,7 +22,7 @@
       },
       "env": {
         "EXPO_PUBLIC_APP_NAME": "DeutschLearnen",
-        "EXPO_PUBLIC_API_URL": "http://192.168.68.107:4000"
+        "EXPO_PUBLIC_API_URL": "https://deutschlearnen-server.onrender.com"
       }
     },
     "production": {
@@ -32,11 +32,12 @@
       },
       "env": {
         "EXPO_PUBLIC_APP_NAME": "DeutschLearnen",
-        "EXPO_PUBLIC_API_URL": "http://192.168.68.107:4000"
+        "EXPO_PUBLIC_API_URL": "https://deutschlearnen-server.onrender.com"
       }
     }
   },
   "submit": {
     "production": {}
-  }
+  },
+  "//": "EXPO_PUBLIC_API_TOKEN is deliberately absent: this file is committed. Set it with `eas secret:create` for cloud builds, or in apps/mobile/.env (gitignored) for local builds."
 }
