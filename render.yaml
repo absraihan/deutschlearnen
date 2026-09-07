@@ -26,6 +26,11 @@ services:
         value: none
       - key: TTS_PROVIDER
         value: none
+      # Every request must carry the caller's own AI key. The server spends
+      # nobody's quota but theirs, which is what makes the APK shareable.
+      # Set to true to go back to the server answering on its own key.
+      - key: ALLOW_SERVER_KEY_FALLBACK
+        value: false
       - key: LOG_LEVEL
         value: info
       - key: GEMINI_API_KEY
