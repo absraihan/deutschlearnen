@@ -1,0 +1,34 @@
+# Render blueprint. Deploys the tutor server from this repository.
+#
+# Render builds the Dockerfile, gives it HTTPS and a stable address, and the
+# free instance type sleeps when idle (a first request after sleeping is slow;
+# see docs/DEPLOYMENT.md for the trade-off).
+#
+# GEMINI_API_KEY and API_TOKEN are marked sync:false so they are entered in the
+# Render dashboard and never committed here.
+services:
+  - type: web
+    name: deutschlearnen-server
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: HOST
+        value: 0.0.0.0
+      - key: AI_PROVIDER
+        value: gemini
+      - key: GEMINI_MODEL
+        value: gemini-3.5-flash-lite
+      - key: STT_PROVIDER
+        value: none
+      - key: TTS_PROVIDER
+        value: none
+      - key: LOG_LEVEL
+        value: info
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: API_TOKEN
+        sync: false

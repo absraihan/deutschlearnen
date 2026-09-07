@@ -1,0 +1,17 @@
+node_modules
+**/node_modules
+**/dist
+apps/mobile
+.git
+.expo
+.expo-export-check
+*.log
+*.apk
+*.aab
+*.keystore
+.env
+.env.*
+!.env.example
+coverage
+docs
+scripts

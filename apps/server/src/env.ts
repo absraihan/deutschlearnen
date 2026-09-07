@@ -101,6 +101,17 @@ function parseEnv(): Env {
     throw new Error('TTS_PROVIDER=openai requires OPENAI_API_KEY. See .env.example.');
   }
 
+  /**
+   * An open server on localhost is a convenience. An open server on the public
+   * internet is somebody else spending your AI quota, so refuse to start.
+   */
+  if (env.NODE_ENV === 'production' && !env.API_TOKEN) {
+    throw new Error(
+      'NODE_ENV=production requires API_TOKEN: a deployed server without one lets anyone spend your AI quota. ' +
+        'Generate one with: node -e "console.log(require(\'crypto\').randomBytes(24).toString(\'hex\'))"',
+    );
+  }
+
   return env;
 }
 

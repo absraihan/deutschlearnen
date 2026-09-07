@@ -39,7 +39,7 @@ deutschlearnen/
 │                        AIProvider abstraction: OpenAI | Anthropic | Mock
 ├── apps/mobile/         Expo Router + TypeScript. SQLite, Zustand, TanStack Query
 └── docs/                ARCHITECTURE, SETUP, API, DATABASE, AI_PROMPTS,
-                         TESTING, ANDROID_BUILD, ENVIRONMENT
+                         TESTING, ANDROID_BUILD, ENVIRONMENT, DEPLOYMENT
 ```
 
 ---
@@ -79,6 +79,7 @@ gegangen.` To get real conversation, set `AI_PROVIDER=openai` and an
 
 Full instructions, including voice setup: **[docs/SETUP.md](docs/SETUP.md)**
 Android APK: **[docs/ANDROID_BUILD.md](docs/ANDROID_BUILD.md)**
+Running without your laptop, and Play Store: **[docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)**
 
 ---
 
