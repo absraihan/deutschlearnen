@@ -35,12 +35,23 @@ path for you** — no JDK, no SDK, no Gradle.
 
 ### One-time setup
 
+One command per line — Windows PowerShell 5.1 does not accept `&&`.
+
 ```bash
 npm install -g eas-cli
-eas login                      # free Expo account
-cd apps/mobile
-eas init                       # writes the project id into app.json
 ```
+```bash
+eas login
+```
+```bash
+cd apps/mobile
+```
+```bash
+eas init
+```
+
+`eas login` needs a free Expo account and can only be done by the account
+holder; nothing else in the build is interactive.
 
 `eas.json` is already in the repo with three profiles:
 
@@ -113,7 +124,8 @@ Only if you want to build without the cloud.
 Open a new terminal and verify:
 
 ```bash
-java -version && adb --version
+java -version
+adb --version
 ```
 
 ### Generate native projects and build

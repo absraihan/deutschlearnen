@@ -2,6 +2,13 @@
 
 From nothing to speaking German on your Android phone.
 
+> **Windows PowerShell users:** every command below is one command per line on
+> purpose. Windows PowerShell 5.1 does **not** support `&&` as a separator and
+> will fail with *"The token '&&' is not a valid statement separator"*. Run the
+> lines one at a time, or use `;` to chain them. `sed`, `grep` and `cat` are
+> also absent from PowerShell — use Git Bash for those, or the PowerShell
+> equivalents noted where they appear.
+
 ---
 
 ## 1. Prerequisites
@@ -17,7 +24,9 @@ From nothing to speaking German on your Android phone.
 Check:
 
 ```bash
-node -v && npm -v && git --version
+node -v
+npm -v
+git --version
 ```
 
 ---
