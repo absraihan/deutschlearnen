@@ -62,7 +62,42 @@ export class GeminiProvider extends ChatBasedProvider {
     this.timeoutMs = options.timeoutMs ?? 45_000;
   }
 
+  /**
+   * Gemini's free tier returns 503 "high demand" intermittently - often enough
+   * that a learner mid-sentence sees it. Retrying twice with a short backoff
+   * turns most of those into a slightly slower successful turn instead of an
+   * error card. Bounded on purpose: a learner waiting to speak would rather be
+   * told to try again than sit through a long retry chain.
+   */
+  private static readonly TRANSIENT_RETRY_DELAYS_MS = [700, 1800];
+
   async chat(
+    messages: ChatMessage[],
+    options: ChatOptions = {},
+  ): Promise<{ text: string; usage: AIUsage | null }> {
+    let lastTransient: AIProviderError | null = null;
+
+    for (let attempt = 0; attempt <= GeminiProvider.TRANSIENT_RETRY_DELAYS_MS.length; attempt += 1) {
+      try {
+        return await this.attemptChat(messages, options);
+      } catch (error) {
+        const isTransient =
+          error instanceof AIProviderError &&
+          (error.code === 'provider_unavailable' || error.code === 'rate_limited');
+
+        if (!isTransient || attempt === GeminiProvider.TRANSIENT_RETRY_DELAYS_MS.length) {
+          throw error;
+        }
+        lastTransient = error as AIProviderError;
+        await delay(GeminiProvider.TRANSIENT_RETRY_DELAYS_MS[attempt]!);
+      }
+    }
+
+    // Unreachable: the loop either returns or throws.
+    throw lastTransient ?? new Error('Gemini retry loop ended unexpectedly');
+  }
+
+  private async attemptChat(
     messages: ChatMessage[],
     options: ChatOptions = {},
   ): Promise<{ text: string; usage: AIUsage | null }> {
@@ -272,4 +307,9 @@ function mapGeminiError(
     retryable: false,
     status: 502,
   });
+}
+
+/** Small sleep used by the transient-failure backoff. */
+function delay(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }

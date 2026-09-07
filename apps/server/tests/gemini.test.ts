@@ -97,3 +97,76 @@ describe('GeminiProvider request shape', () => {
     ]);
   });
 });
+
+/**
+ * Transient-failure retry.
+ *
+ * Gemini's free tier returns 503 intermittently, which reached a learner
+ * mid-sentence as an error card on a real device. These pin the retry so it
+ * covers the transient cases and nothing else - retrying a bad key or a safety
+ * block would just waste time and quota.
+ */
+describe('GeminiProvider transient retry', () => {
+  class CountingProvider extends GeminiProvider {
+    attempts = 0;
+    constructor(private readonly script: Array<AIProviderError | { text: string }>) {
+      super({ apiKey: 'k', model: 'test-model' });
+    }
+    // @ts-expect-error deliberately overriding the private transport for the test
+    protected async attemptChat() {
+      const next = this.script[this.attempts];
+      this.attempts += 1;
+      if (next instanceof AIProviderError) throw next;
+      return { text: (next as { text: string }).text, usage: null };
+    }
+  }
+
+  const transient = (code: string) =>
+    new AIProviderError({ code, message: 'busy', retryable: true, status: 503 });
+
+  it('recovers when a 503 is followed by success', async () => {
+    const p = new CountingProvider([transient('provider_unavailable'), { text: '{"ok":true}' }]);
+    await expect(p.chat([{ role: 'user', content: 'Hallo' }])).resolves.toMatchObject({
+      text: '{"ok":true}',
+    });
+    expect(p.attempts).toBe(2);
+  });
+
+  it('retries a rate limit too, since the free tier throttles in bursts', async () => {
+    const p = new CountingProvider([transient('rate_limited'), { text: 'ok' }]);
+    await p.chat([{ role: 'user', content: 'Hallo' }]);
+    expect(p.attempts).toBe(2);
+  });
+
+  it('gives up after two retries rather than making the learner wait', async () => {
+    const p = new CountingProvider([
+      transient('provider_unavailable'),
+      transient('provider_unavailable'),
+      transient('provider_unavailable'),
+    ]);
+    await expect(p.chat([{ role: 'user', content: 'Hallo' }])).rejects.toMatchObject({
+      code: 'provider_unavailable',
+    });
+    expect(p.attempts).toBe(3);
+  });
+
+  it('does not retry an invalid key', async () => {
+    const p = new CountingProvider([
+      new AIProviderError({ code: 'auth_error', message: 'bad key', retryable: false, status: 500 }),
+    ]);
+    await expect(p.chat([{ role: 'user', content: 'Hallo' }])).rejects.toMatchObject({
+      code: 'auth_error',
+    });
+    expect(p.attempts).toBe(1);
+  });
+
+  it('does not retry a safety block', async () => {
+    const p = new CountingProvider([
+      new AIProviderError({ code: 'content_blocked', message: 'blocked', retryable: false, status: 422 }),
+    ]);
+    await expect(p.chat([{ role: 'user', content: 'Hallo' }])).rejects.toMatchObject({
+      code: 'content_blocked',
+    });
+    expect(p.attempts).toBe(1);
+  });
+});
