@@ -57,7 +57,7 @@ export class GeminiProvider extends ChatBasedProvider {
     this.apiKey = options.apiKey;
     this.model = options.model;
     this.baseUrl = (
-      options.baseUrl ?? 'https://generativelanguage.googleapis.com/v1beta'
+      options.baseUrl || 'https://generativelanguage.googleapis.com/v1beta'
     ).replace(/\/$/, '');
     this.timeoutMs = options.timeoutMs ?? 45_000;
   }
@@ -77,7 +77,14 @@ export class GeminiProvider extends ChatBasedProvider {
       contents,
       generationConfig: {
         temperature: options.temperature ?? 0.7,
-        maxOutputTokens: options.maxTokens ?? 800,
+        /**
+         * Gemini 3.x reasons internally and those tokens count against
+         * maxOutputTokens, so a budget that is ample for other providers
+         * truncates here. The floor keeps room for the reasoning plus the full
+         * JSON envelope. (thinkingConfig, which would let us switch reasoning
+         * off, is rejected by this model.)
+         */
+        maxOutputTokens: Math.max(options.maxTokens ?? 800, 2048),
         // Gemini can be constrained to emit JSON at the API level, which makes
         // the schema validation upstream a check rather than a gamble.
         ...(options.json ? { responseMimeType: 'application/json' } : {}),
@@ -134,11 +141,26 @@ export class GeminiProvider extends ChatBasedProvider {
 
     const text =
       payload.candidates?.[0]?.content?.parts?.map((p) => p.text ?? '').join('') ?? '';
+    const reason = payload.candidates?.[0]?.finishReason;
+
+    /**
+     * A truncated answer is usually *valid-looking* JSON cut mid-string. Left to
+     * the caller it fails schema validation, triggers a repair retry, and gets
+     * truncated again - two paid calls for a budget problem. Fail immediately
+     * and say what to change.
+     */
+    if (reason === 'MAX_TOKENS') {
+      throw new AIProviderError({
+        code: 'response_truncated',
+        message: `Gemini hit maxOutputTokens before finishing the JSON (model ${this.model}). Raise the token budget.`,
+        userMessage: 'Die Antwort des Tutors war zu lang. Bitte versuche es noch einmal.',
+        retryable: true,
+      });
+    }
 
     if (!text.trim()) {
-      const reason = payload.candidates?.[0]?.finishReason;
       throw new AIProviderError({
-        code: reason === 'MAX_TOKENS' ? 'response_truncated' : 'empty_response',
+        code: 'empty_response',
         message: `Gemini returned no usable text (finishReason: ${reason ?? 'none'})`,
         userMessage: 'Der Tutor hat nicht geantwortet. Bitte noch einmal.',
         retryable: true,
@@ -219,7 +241,7 @@ function mapGeminiError(
   if (status === 404) {
     return new AIProviderError({
       code: 'model_not_found',
-      message: `${message} (model "${model}" - set GEMINI_MODEL to one your key can access, e.g. gemini-2.0-flash)`,
+      message: `${message} (configured GEMINI_MODEL="${model}"; the message above names the current replacement)`,
       userMessage: 'Das Tutor-Modell ist nicht verfügbar. Prüfe GEMINI_MODEL.',
       retryable: false,
       status: 500,

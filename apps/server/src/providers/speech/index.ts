@@ -66,7 +66,7 @@ export class WhisperSTTProvider implements SpeechToTextProvider {
   ) {}
 
   async transcribe(input: TranscribeInput): Promise<TranscribeResponse> {
-    const baseUrl = (this.options.baseUrl ?? 'https://api.openai.com/v1').replace(/\/$/, '');
+    const baseUrl = (this.options.baseUrl || 'https://api.openai.com/v1').replace(/\/$/, '');
     const form = new FormData();
     form.append(
       'file',
@@ -184,7 +184,7 @@ export class OpenAITTSProvider implements TextToSpeechProvider {
   ) {}
 
   async synthesize(input: SynthesizeInput): Promise<{ audio: Buffer; contentType: string }> {
-    const baseUrl = (this.options.baseUrl ?? 'https://api.openai.com/v1').replace(/\/$/, '');
+    const baseUrl = (this.options.baseUrl || 'https://api.openai.com/v1').replace(/\/$/, '');
 
     let response;
     try {

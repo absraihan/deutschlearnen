@@ -7,6 +7,18 @@ import { z } from 'zod';
 loadDotenv({ path: path.resolve(process.cwd(), '.env') });
 loadDotenv({ path: path.resolve(process.cwd(), '../../.env') });
 
+/**
+ * An unset variable in a .env file is an empty string, not undefined. Left as
+ * '' it defeats every `?? default` downstream - which is exactly how
+ * GEMINI_BASE_URL= turned into an 'Invalid URL' crash on the first real turn.
+ * Normalising here fixes it once for every optional setting.
+ */
+const optionalString = () =>
+  z
+    .string()
+    .optional()
+    .transform((value) => (value && value.trim() !== '' ? value : undefined));
+
 const EnvSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
   PORT: z.coerce.number().int().positive().default(4000),
@@ -17,18 +29,18 @@ const EnvSchema = z.object({
   /** Which AIProvider implementation to construct. */
   AI_PROVIDER: z.enum(['openai', 'anthropic', 'gemini', 'mock']).default('mock'),
 
-  OPENAI_API_KEY: z.string().optional(),
+  OPENAI_API_KEY: optionalString(),
   OPENAI_MODEL: z.string().default('gpt-4o-mini'),
-  OPENAI_BASE_URL: z.string().optional(),
+  OPENAI_BASE_URL: optionalString(),
 
-  ANTHROPIC_API_KEY: z.string().optional(),
+  ANTHROPIC_API_KEY: optionalString(),
   ANTHROPIC_MODEL: z.string().default('claude-sonnet-5'),
-  ANTHROPIC_BASE_URL: z.string().optional(),
+  ANTHROPIC_BASE_URL: optionalString(),
 
   /** Google Gemini: the only major provider with a free tier. */
-  GEMINI_API_KEY: z.string().optional(),
-  GEMINI_MODEL: z.string().default('gemini-2.0-flash'),
-  GEMINI_BASE_URL: z.string().optional(),
+  GEMINI_API_KEY: optionalString(),
+  GEMINI_MODEL: z.string().default('gemini-3.5-flash-lite'),
+  GEMINI_BASE_URL: optionalString(),
 
   /** Speech-to-text: 'openai-whisper' or 'none' (device recognition only). */
   STT_PROVIDER: z.enum(['openai-whisper', 'none']).default('none'),
@@ -43,7 +55,7 @@ const EnvSchema = z.object({
    * Shared secret the mobile app sends as x-api-token. Optional in development;
    * strongly recommended once the server is reachable from your phone.
    */
-  API_TOKEN: z.string().optional(),
+  API_TOKEN: optionalString(),
 
   /** Comma-separated allowed origins, or '*' for any. */
   CORS_ORIGIN: z.string().default('*'),

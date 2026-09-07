@@ -60,6 +60,10 @@ Set correction to null on every turn. Do not correct, do not hint at mistakes. P
 Only for important or critical mistakes. Fill "corrected" and leave "explanation" as an empty string. Do not mention the correction inside "reply".`,
   NORMAL: `CORRECTION MODE: NORMAL
 Correct important and critical mistakes only; ignore minor slips. Give the corrected sentence plus one short explanation.
+These are ALWAYS important, never minor, because they are the core of the learner level:
+wrong article or case ("ein Kaffee" instead of "einen Kaffee"), wrong auxiliary in the
+Perfekt ("habe gegangen" instead of "bin gegangen"), verb not in second position in a main
+clause, and verb not at the end of a subordinate clause. Correct these every time they occur.
 Weave at most a very brief acknowledgement into "reply" (for example "Fast! Besser: ...") and then carry on with the conversation.
 If the learner made no mistake that matters, set correction to null and simply continue talking.`,
   DETAILED: `CORRECTION MODE: DETAILED

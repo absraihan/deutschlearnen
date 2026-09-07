@@ -47,7 +47,7 @@ export class OpenAIProvider extends ChatBasedProvider {
     }
     this.apiKey = options.apiKey;
     this.model = options.model;
-    this.baseUrl = (options.baseUrl ?? 'https://api.openai.com/v1').replace(/\/$/, '');
+    this.baseUrl = (options.baseUrl || 'https://api.openai.com/v1').replace(/\/$/, '');
     this.timeoutMs = options.timeoutMs ?? 45_000;
   }
 

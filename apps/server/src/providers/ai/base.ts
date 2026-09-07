@@ -142,7 +142,15 @@ export abstract class ChatBasedProvider implements AIProvider, ChatBackend {
     const profile = getLevelProfile(request.learner.level);
     const result = await this.chatJson(messages, TutorTurnSchema, {
       temperature: 0.7,
-      maxTokens: Math.max(400, profile.replyWords.max * 12),
+      /**
+       * The budget covers the whole JSON envelope, not just the spoken reply:
+       * the correction with its German, Bangla and English explanations, plus
+       * vocabulary entries with examples and translations. Bangla in particular
+       * is token-hungry. Sizing this off reply length alone truncated real
+       * answers mid-string, which then failed schema validation twice and cost
+       * a retry for what was never a formatting problem.
+       */
+      maxTokens: Math.max(1600, profile.replyWords.max * 24),
     });
 
     return { value: result.value, usage: result.usage, degraded: result.degraded };

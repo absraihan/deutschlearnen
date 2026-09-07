@@ -52,7 +52,7 @@ const SCRIPTS = {
   ],
   B1: [
     { say: 'Ich arbeite als Ingenieur und ich mag meine Arbeit.', expect: null },
-    { say: 'Ich denke, dass Homeoffice ist besser für die Konzentration.', expect: 'besser ist' },
+    { say: 'Ich denke, dass Homeoffice ist besser für die Konzentration.', expect: /besser.*ist.?$/ },
     { say: 'Aber manchmal vermisse ich der Kontakt zu den Kollegen.', expect: 'den Kontakt' },
   ],
   B2: [
@@ -263,7 +263,10 @@ async function main() {
     if (turn.expect) {
       expected += 1;
       const got = t.correction?.corrected ?? '';
-      const hit = got.toLowerCase().includes(turn.expect.toLowerCase());
+      const hit =
+        turn.expect instanceof RegExp
+          ? turn.expect.test(got)
+          : got.toLowerCase().includes(turn.expect.toLowerCase());
       if (hit) matched += 1;
       console.log(
         hit
