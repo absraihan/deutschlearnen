@@ -1,6 +1,7 @@
 import React from 'react';
 import { Tabs } from 'expo-router';
 import { StyleSheet } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '@/theme';
 import { Text } from '@/components/ui';
 
@@ -10,6 +11,18 @@ import { Text } from '@/components/ui';
  */
 export default function TabsLayout() {
   const theme = useTheme();
+  const insets = useSafeAreaInsets();
+
+  /**
+   * Android 16 makes edge-to-edge mandatory, so the app draws underneath the
+   * system navigation bar. Without adding the bottom inset the tab bar sits
+   * behind the back/home/recents buttons and cannot be tapped at all.
+   *
+   * Gesture navigation reports a small inset (~16dp) and three-button
+   * navigation a large one (~48dp); both are handled by adding whatever the
+   * device reports to the bar's own height.
+   */
+  const barHeight = 64 + insets.bottom;
 
   return (
     <Tabs
@@ -21,8 +34,8 @@ export default function TabsLayout() {
           backgroundColor: theme.colors.surface,
           borderTopColor: theme.colors.border,
           borderTopWidth: StyleSheet.hairlineWidth,
-          height: 64,
-          paddingBottom: 8,
+          height: barHeight,
+          paddingBottom: insets.bottom + 8,
           paddingTop: 6,
         },
         tabBarLabelStyle: { fontSize: 11, fontWeight: '600' },

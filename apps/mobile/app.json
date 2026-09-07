@@ -16,7 +16,7 @@
     ],
     "android": {
       "package": "com.deutschlearnen.app",
-      "versionCode": 1,
+      "versionCode": 2,
       "adaptiveIcon": {
         "backgroundColor": "#0B1220"
       },
