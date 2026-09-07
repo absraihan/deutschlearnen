@@ -107,14 +107,19 @@ export async function transcribeRecording(input: {
  * On-device recognition (optional native module)
  * ------------------------------------------------------------------ */
 
+/**
+ * The slice of expo-speech-recognition we use.
+ *
+ * `ExpoSpeechRecognitionModule` extends Expo's `NativeModule`, so events are
+ * subscribed with `addListener(name, handler)` - there is no
+ * `addSpeechRecognitionListener` method on it.
+ */
 interface NativeSpeechModule {
   requestPermissionsAsync(): Promise<{ granted: boolean }>;
   start(options: Record<string, unknown>): void;
   stop(): void;
-  addSpeechRecognitionListener(
-    event: string,
-    handler: (payload: unknown) => void,
-  ): { remove(): void };
+  abort?(): void;
+  addListener(event: string, handler: (payload: unknown) => void): { remove(): void };
 }
 
 let nativeModule: NativeSpeechModule | null | undefined;
@@ -132,7 +137,16 @@ export function getNativeRecognizer(): NativeSpeechModule | null {
     const mod = require('expo-speech-recognition') as {
       ExpoSpeechRecognitionModule?: NativeSpeechModule;
     };
-    nativeModule = mod.ExpoSpeechRecognitionModule ?? null;
+    const candidate = mod.ExpoSpeechRecognitionModule;
+    // Verify the surface we actually call, not just that the import resolved:
+    // a module present but shaped differently would fail at the worst moment,
+    // mid-sentence, with an unexplained error.
+    nativeModule =
+      candidate &&
+      typeof candidate.start === 'function' &&
+      typeof candidate.addListener === 'function'
+        ? candidate
+        : null;
   } catch {
     nativeModule = null;
   }
@@ -183,7 +197,7 @@ export function recognizeOnDevice(options: { maxDurationMs: number }): {
     }, options.maxDurationMs);
 
     subscriptions.push(
-      recognizer.addSpeechRecognitionListener('result', (payload) => {
+      recognizer.addListener('result', (payload) => {
         const event = payload as {
           isFinal?: boolean;
           results?: Array<{ transcript?: string; confidence?: number }>;
@@ -192,7 +206,11 @@ export function recognizeOnDevice(options: { maxDurationMs: number }): {
 
         const best = event.results?.[0];
         const text = (best?.transcript ?? '').trim();
-        const confidence = typeof best?.confidence === 'number' ? best.confidence : null;
+        // The recogniser reports -1 when it has no confidence figure at all.
+        // Treating that as "low" would wrongly ask the learner to repeat a
+        // sentence that was recognised perfectly well.
+        const raw = best?.confidence;
+        const confidence = typeof raw === 'number' && raw >= 0 ? raw : null;
 
         finish(() => {
           if (text.length < MIN_UTTERANCE_CHARS) {
@@ -210,8 +228,30 @@ export function recognizeOnDevice(options: { maxDurationMs: number }): {
       }),
     );
 
+    // Recognition can end without ever emitting a final result - the learner
+    // tapped stop before speaking, or the recogniser heard only silence.
+    // Without this the promise would never settle and the microphone would
+    // appear stuck on "listening" forever.
     subscriptions.push(
-      recognizer.addSpeechRecognitionListener('error', (payload) => {
+      recognizer.addListener('end', () => {
+        // `end` can arrive just before the final `result`, so give the result a
+        // moment to win. `finish` is idempotent, so if it already resolved this
+        // does nothing.
+        setTimeout(() => {
+          finish(() =>
+            reject(
+              new SpeechError(
+                'empty',
+                'Ich habe nichts gehört. Sprich bitte etwas lauter und näher am Mikrofon.',
+              ),
+            ),
+          );
+        }, 400);
+      }),
+    );
+
+    subscriptions.push(
+      recognizer.addListener('error', (payload) => {
         const event = payload as { error?: string; message?: string };
         finish(() => {
           if (event.error === 'not-allowed') {
